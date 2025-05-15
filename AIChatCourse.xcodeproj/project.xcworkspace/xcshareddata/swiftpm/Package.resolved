@@ -1,0 +1,24 @@
+{
+  "originHash" : "0f0ed71e8d2ca2b099afc475b46774135284ecbb3d1c08d97e3072e13dd129a7",
+  "pins" : [
+    {
+      "identity" : "sdwebimage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SDWebImage/SDWebImage.git",
+      "state" : {
+        "revision" : "cac9a55a3ae92478a2c95042dcc8d9695d2129ca",
+        "version" : "5.21.0"
+      }
+    },
+    {
+      "identity" : "sdwebimageswiftui",
+      "kind" : "remoteSourceControl",
+      "location" : "https://gitee.com/sinduke/SDWebImageSwiftUI.git",
+      "state" : {
+        "revision" : "4c7f169e39bc35d6b80d42b8eb8301bee9cd0907",
+        "version" : "1.5.0"
+      }
+    }
+  ],
+  "version" : 3
+}
