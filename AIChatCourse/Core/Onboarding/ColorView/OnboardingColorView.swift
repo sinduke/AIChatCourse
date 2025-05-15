@@ -23,8 +23,8 @@ struct OnboardingColorView: View {
             spacing: 16,
             content: {
                 ZStack {
-                    if selectedColor != nil {
-                        catButton
+                    if let selectedColor {
+                        catButton(selectColor: selectedColor)
                             .transition(.move(edge: .bottom))
                     }
                 }
@@ -33,11 +33,12 @@ struct OnboardingColorView: View {
             }
         )
         .animation(.easeInOut(duration: 0.3), value: selectedColor != nil)
+        .toolbar(.hidden, for: .navigationBar)
     }
     
-    private var catButton: some View {
+    private func catButton(selectColor: Color) -> some View {
         NavigationLink {
-            OnboardingCompletedView()
+            OnboardingCompletedView(selectColor: selectColor)
         } label: {
             Text("continue".capitalized)
                 .callToActionButton()
@@ -83,4 +84,5 @@ struct OnboardingColorView: View {
     NavigationStack {
         OnboardingColorView()
     }
+    .environment(AppState())
 }
