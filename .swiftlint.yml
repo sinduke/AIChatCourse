@@ -11,4 +11,7 @@ opt_in_rules: # 开启一些默认不开启的规则
   - fatal_error_message # 要求 fatalError() 必须有清晰的错误信息，不能传空字符串或省略
   - redundant_optional_initialization # 检测是否多余地初始化为 nil，因为 Swift 默认初始化为 nil（可选值）。
   - operator_usage_whitespace # 要求运算符两侧有空格，提高代码可读性
+  
+disabled_rules:
+  - trailing_whitespace 
 
