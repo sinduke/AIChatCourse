@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F2A491F42DD5D8BD0061D9DD /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F2A491F32DD5D8BD0061D9DD /* SDWebImageSwiftUI */; };
+		F2A492062DD63BBE0061D9DD /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F2A492052DD63BBE0061D9DD /* SDWebImageSwiftUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,7 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F2A491F42DD5D8BD0061D9DD /* SDWebImageSwiftUI in Frameworks */,
+				F2A492062DD63BBE0061D9DD /* SDWebImageSwiftUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,7 +118,7 @@
 			);
 			name = AIChatCourse;
 			packageProductDependencies = (
-				F2A491F32DD5D8BD0061D9DD /* SDWebImageSwiftUI */,
+				F2A492052DD63BBE0061D9DD /* SDWebImageSwiftUI */,
 			);
 			productName = AIChatCourse;
 			productReference = F20868FC2DD4A53200D6BF79 /* AIChatCourse.app */;
@@ -203,7 +203,7 @@
 			mainGroup = F20868F32DD4A53200D6BF79;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				F2A491F22DD5D8BD0061D9DD /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				F2A492042DD63BBE0061D9DD /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F20868FD2DD4A53200D6BF79 /* Products */;
@@ -635,20 +635,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		F2A491F22DD5D8BD0061D9DD /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+		F2A492042DD63BBE0061D9DD /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://gitee.com/sinduke/SDWebImageSwiftUI.git";
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.5.0;
+				minimumVersion = 3.1.3;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		F2A491F32DD5D8BD0061D9DD /* SDWebImageSwiftUI */ = {
+		F2A492052DD63BBE0061D9DD /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = F2A491F22DD5D8BD0061D9DD /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			package = F2A492042DD63BBE0061D9DD /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
 			productName = SDWebImageSwiftUI;
 		};
 /* End XCSwiftPackageProductDependency section */
