@@ -32,19 +32,19 @@ struct OnboardingCompletedView: View {
     }
     
     private var ctaButton: some View {
-        Button {
-            onFinishButtonPressed()
-        } label: {
-            ZStack {
-                if isCompletingSetupProfile {
-                    ProgressView()
-                        .tint(.white)
-                } else {
-                    Text("finish".uppercased())
-                }
+        ZStack {
+            if isCompletingSetupProfile {
+                ProgressView()
+                    .tint(.white)
+            } else {
+                Text("finish".uppercased())
             }
-                .callToActionButton()
         }
+        .anyButton(.press) {
+            onFinishButtonPressed()
+        }
+        .callToActionButton()
+        .disabled(isCompletingSetupProfile)
     }
     
     func onFinishButtonPressed() {
