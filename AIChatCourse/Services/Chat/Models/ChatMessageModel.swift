@@ -36,6 +36,11 @@ struct ChatMessageModel: Identifiable, Hashable {
 // MARK: - Mock Data
 extension ChatMessageModel {
     
+    func hasBeenSeenBy(userId: String) -> Bool {
+        guard let seenByIds else { return false }
+        return seenByIds.contains(userId)
+    }
+    
     /// 单条示例（方便 SwiftUI Preview）
     static var mock: ChatMessageModel { mocks.first! }
     

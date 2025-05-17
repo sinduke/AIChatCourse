@@ -13,7 +13,20 @@ struct ChatView: View {
     var body: some View {
         NavigationStack {
             List(chats) { chat in
-                /*@START_MENU_TOKEN@*/Text(chat.id)/*@END_MENU_TOKEN@*/
+                ChatRowCellViewBuilder(
+                    currentUserId: nil, // TODO: Add Cuid
+                    chat: chat) {
+                        try? await Task.sleep(for: .seconds(1))
+                        return .mock
+                    } getLastChatMessage: {
+                        try? await Task.sleep(for: .seconds(2))
+                        return .mock
+                    }
+                    .anyButton(.highlight, action: {
+                        
+                    })
+                    .removeListRowFormatting()
+
             }
                 .navigationTitle("ChatViewNavTitle")
         }
