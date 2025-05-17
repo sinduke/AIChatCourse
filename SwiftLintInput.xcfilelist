@@ -1,0 +1,3 @@
+${SRCROOT}/AIChatCourse/**/*.swift
+${SRCROOT}/AIChatCourseTests/**/*.swift
+${SRCROOT}/AIChatCourseUITests/**/*.swift
