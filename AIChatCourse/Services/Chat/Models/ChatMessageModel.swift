@@ -42,10 +42,10 @@ extension ChatMessageModel {
     }
     
     /// 单条示例（方便 SwiftUI Preview）
-    static var mock: ChatMessageModel { mocks.first! }
+    static var mock: Self { mocks.first! }
     
     /// 5 条示例消息
-    static let mocks: [ChatMessageModel] = {
+    static let mocks: [Self] = {
         let now = Date()
         
         return [

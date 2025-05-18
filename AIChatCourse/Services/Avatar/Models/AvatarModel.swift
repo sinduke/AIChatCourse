@@ -41,11 +41,11 @@ struct AvatarModel: Hashable {
         AvatarDescriptionBuilder(avatar: self).charcaterDescription
     }
     
-    static var mock: AvatarModel {
+    static var mock: Self {
         mocks[0]
     }
     
-    static var mocks: [AvatarModel] {
+    static var mocks: [Self] {
         let now = Date()
         return [
             AvatarModel(

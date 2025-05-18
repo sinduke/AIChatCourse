@@ -31,11 +31,11 @@ struct ChatModel: Identifiable {
 
 extension ChatModel {
     
-    static var mock: ChatModel {
+    static var mock: Self {
         mocks.first!
     }
     
-    static var mocks: [ChatModel] {
+    static var mocks: [Self] {
         let now = Date()
         return [
             ChatModel(
