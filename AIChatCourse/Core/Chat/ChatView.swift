@@ -13,9 +13,11 @@ struct ChatView: View {
     @State private var avatar: AvatarModel? = .mock
     @State private var currentUser: UserModel? = .mock
     @State private var textFieldText: String = ""
-    @State private var showChatSettings: Bool = false
     
+    @State private var showChatSettings: AnyAppAlert?
     @State private var scrollPosition: String?
+//    @State private var showAlert: Bool = false
+    @State private var showAlert: AnyAppAlert?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -36,16 +38,8 @@ struct ChatView: View {
                     }
             }
         }
-        .confirmationDialog("", isPresented: $showChatSettings) {
-            Button("Report User / Chat", role: .destructive) {
-                
-            }
-            Button("Delete Chat", role: .destructive) {
-                
-            }
-        } message: {
-            Text("What would you like to do?")
-        }
+        .showCustomAlert(type: .confirmationDialog, alert: $showChatSettings)
+        .showCustomAlert(alert: $showAlert)
 
     }
     
@@ -103,27 +97,48 @@ struct ChatView: View {
     
     // MARK: -- Func
     private func onSendMessagePressed() {
-        // TODO: 似乎可以发送空消息 需要修复
+        
         guard let currentUser else { return }
         let content = textFieldText
         
-        let message = ChatMessageModel(
-            id: UUID().uuidString,
-            chatId: UUID().uuidString,
-            authorId: currentUser.userId,
-            content: content,
-            seenByIds: nil,
-            dateCreated: .now
-        )
-        chatMessages.append(message)
-        
-        scrollPosition = message.id
-        
-        textFieldText = ""
+        do {
+            try TextValidationHelper.checkIfTextIsValid(text: content)
+            
+            let message = ChatMessageModel(
+                id: UUID().uuidString,
+                chatId: UUID().uuidString,
+                authorId: currentUser.userId,
+                content: content,
+                seenByIds: nil,
+                dateCreated: .now
+            )
+            chatMessages.append(message)
+            
+            scrollPosition = message.id
+            
+            textFieldText = ""
+        } catch {
+            showAlert = AnyAppAlert(error: error)
+        }
     }
     
     private func onChatSettingPressed() {
-        showChatSettings = true
+        showChatSettings = AnyAppAlert(
+            title: "",
+            subtitle: "What would you like to do?",
+            buttons: {
+                AnyView(
+                    Group(content: {
+                        Button("Report User / Chat", role: .destructive) {
+                            
+                        }
+                        Button("Delete Chat", role: .destructive) {
+                            
+                        }
+                    })
+                )
+            }
+        )
     }
 }
 
