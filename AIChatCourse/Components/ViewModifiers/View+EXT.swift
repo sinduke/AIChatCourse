@@ -50,4 +50,14 @@ extension View {
                 )
             )
     }
+    
+    // 在SwiftUI中慎用 仅仅bool控制的是非才允许使用  慎用。慎用
+    @ViewBuilder
+    func ifSatisfiedCondition(_ condition: Bool, transform: (Self) -> some View) -> some View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
+    }
 }

@@ -16,15 +16,13 @@ struct ChatView: View {
     
     @State private var showChatSettings: AnyAppAlert?
     @State private var scrollPosition: String?
-//    @State private var showAlert: Bool = false
     @State private var showAlert: AnyAppAlert?
+    @State private var showProfileModal: Bool = false
     
     var body: some View {
         VStack(spacing: 0) {
-            
             scrollViewSection
             textFieldSection
-            
         }
         .navigationTitle(avatar?.name ?? "Chat")
         .toolbarTitleDisplayMode(.inline)
@@ -40,6 +38,11 @@ struct ChatView: View {
         }
         .showCustomAlert(type: .confirmationDialog, alert: $showChatSettings)
         .showCustomAlert(alert: $showAlert)
+        .showModal(showModal: $showProfileModal) {
+            if let avatar {
+                profileModal(avatar: avatar)
+            }
+        }
 
     }
     
@@ -52,7 +55,8 @@ struct ChatView: View {
                     ChatBubbleViewBuilder(
                         message: message,
                         isCurrentUser: isCurrentUser,
-                        imageName: isCurrentUser ? nil : avatar?.profileImageName
+                        imageName: isCurrentUser ? nil : avatar?.profileImageName,
+                        onImagePressed: onAvatarImagePressed
                     )
                     .id(message.id)
                 }
@@ -93,6 +97,19 @@ struct ChatView: View {
             .padding(.vertical, 6)
             .background(.background)
             .background(Color(uiColor: .secondarySystemBackground))
+    }
+    
+    // MARK: -- FuncOfView
+    private func profileModal(avatar: AvatarModel) -> some View {
+        ProfileModalView(
+            imageName: avatar.profileImageName,
+            title: avatar.name,
+            subtitle: avatar.characterOption?.rawValue.capitalized,
+            headline: avatar.characterDescription) {
+                showProfileModal = false
+            }
+            .padding(40)
+            .transition(.slide)
     }
     
     // MARK: -- Func
@@ -139,6 +156,10 @@ struct ChatView: View {
                 )
             }
         )
+    }
+    
+    private func onAvatarImagePressed() {
+        showProfileModal = true
     }
 }
 
