@@ -17,7 +17,7 @@ struct ChatBubbleViewBuilder: View {
             ChatBubbleView(
                 text: message.content ?? "",
                 textColor: isCurrentUser ? .white : .primary,
-                backgroundColor: isCurrentUser ? .accent : Color.init(uiColor: .systemGray6),
+                backgroundColor: isCurrentUser ? .accent : Color(uiColor: .systemGray6),
                 showImage: !isCurrentUser,
                 imageName: imageName
             )
