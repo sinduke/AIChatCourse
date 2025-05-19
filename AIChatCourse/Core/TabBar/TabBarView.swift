@@ -23,7 +23,7 @@ struct TabBarView: View {
                 .tabItem {
                     Label("Explore", systemImage: "eyes")
                 }
-           ChatView()
+           ChatsView()
                 .tabItem {
                     Label("Chat", systemImage: "bubble.left.and.bubble.right.fill")
                 }

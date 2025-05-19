@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ChatView: View {
+struct ChatsView: View {
     
     @State private var chats: [ChatModel] = ChatModel.mocks
     var body: some View {
@@ -34,5 +34,5 @@ struct ChatView: View {
 }
 
 #Preview {
-    ChatView()
+    ChatsView()
 }
