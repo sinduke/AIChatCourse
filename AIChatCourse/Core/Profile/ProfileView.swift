@@ -23,7 +23,7 @@ struct ProfileView: View {
                 myAvatarsSection
 
             }
-            .navigationTitle("ProfileNavTitle")
+            .navigationTitle("Profile")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     settingButton
@@ -34,7 +34,7 @@ struct ProfileView: View {
             SettingsView()
         }
         .fullScreenCover(isPresented: $showCreateAvatarView) {
-            Text("Create Avatar!")
+            CreateAvatarView()
         }
         .task {
             await loadData()
