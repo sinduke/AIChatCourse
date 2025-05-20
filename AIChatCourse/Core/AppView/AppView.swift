@@ -13,6 +13,7 @@ import SwiftUI
 struct AppView: View {
     
     @Environment(AuthManager.self) private var authManager
+    @Environment(UserManager.self) private var userManager
     @State var appState: AppState = AppState()
 
     var body: some View {
@@ -45,19 +46,27 @@ struct AppView: View {
         if let user = authManager.auth {
             // 用户已经登录
             dLog("用户已经登录了: \(user.uid)")
+            
+            do {
+                try await userManager.logIn(auth: user, isNewUser: false)
+            } catch {
+                dLog("Failed to login to auth for existing user \(error)")
+                
+                try? await Task.sleep(for: .seconds(5))
+                await checkUserStatus()
+            }
+            
         } else {
             // 用户尚未登录
             do {
                 let result = try await authManager.signInAnonymously()
-                
-                /**
-                 dLog("ERROR: anonymous sign in success: \(result.user.uid)", .error)
-                 dLog("INFO: anonymous sign in success: \(result.user.uid)", .info)
-                 dLog("WARNING: anonymous sign in success: \(result.user.uid)", .warning)
-                 */
                 dLog("DEFAULT: anonymous sign in success: \(result.user.uid)") // default = info
+                
+                try await userManager.logIn(auth: result.user, isNewUser: result.isNewUser)
             } catch {
                 dLog(error)
+                try? await Task.sleep(for: .seconds(5))
+                await checkUserStatus()
             }
         }
     }

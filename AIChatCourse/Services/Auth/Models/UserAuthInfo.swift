@@ -12,20 +12,20 @@ struct UserAuthInfo: Sendable {
     let email: String?
     let isAnonymous: Bool
     let creationDate: Date?
-    let lastSingInDate: Date?
+    let lastSignInDate: Date?
     
     init(
         uid: String,
         email: String? = nil,
         isAnonymous: Bool = false,
         creationDate: Date? = nil,
-        lastSingInDate: Date? = nil
+        lastSignInDate: Date? = nil
     ) {
         self.uid = uid
         self.email = email
         self.isAnonymous = isAnonymous
         self.creationDate = creationDate
-        self.lastSingInDate = lastSingInDate
+        self.lastSignInDate = lastSignInDate
     }
     
     static func mock(isAnonymous: Bool = false) -> Self {
@@ -34,7 +34,7 @@ struct UserAuthInfo: Sendable {
             email: "sinduke@outlook.com",
             isAnonymous: isAnonymous,
             creationDate: .now,
-            lastSingInDate: .now
+            lastSignInDate: .now
         )
     }
     

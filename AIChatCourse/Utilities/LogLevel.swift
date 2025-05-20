@@ -7,6 +7,14 @@
 
 import SwiftUI
 
+/**
+ 使用方式
+ 
+  dLog("ERROR: anonymous sign in success: \(result.user.uid)", .error)
+  dLog("INFO: anonymous sign in success: \(result.user.uid)", .info)
+  dLog("WARNING: anonymous sign in success: \(result.user.uid)", .warning)
+ */
+
 enum LogLevel: String {
     case info = "INFO"
     case warning = "⚠️ WARNING"

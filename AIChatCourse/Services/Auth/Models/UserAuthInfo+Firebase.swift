@@ -13,6 +13,6 @@ extension UserAuthInfo {
         self.email = user.email
         self.isAnonymous = user.isAnonymous
         self.creationDate = user.metadata.creationDate
-        self.lastSingInDate = user.metadata.lastSignInDate
+        self.lastSignInDate = user.metadata.lastSignInDate
     }
 }
