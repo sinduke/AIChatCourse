@@ -26,9 +26,13 @@ struct AppView: View {
             }
         )
         .environment(appState)
-        .task {
-            await checkUserStatus()
-        }
+        .onChange(of: appState.showTabBar, { _, showTabBar in
+            if !showTabBar {
+                Task {
+                    await checkUserStatus()
+                }
+            }
+        })
         /**
          简单理解这两项
          .environment(<#T##object: (Observable & AnyObject)?##(Observable & AnyObject)?#>) 这个中使用的是Class 类

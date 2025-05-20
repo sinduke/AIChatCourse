@@ -10,6 +10,7 @@ import SwiftUI
 struct WelcomeView: View {
     @State var imageName: String = Constants.randomImage
     @State private var showSignInView: Bool = false
+    @Environment(AppState.self) private var root
     
     var body: some View {
         NavigationStack {
@@ -30,13 +31,17 @@ struct WelcomeView: View {
                 content: {
                     CreateAccountView(
                         title: "Sign In",
-                        subTitle: "Connect to existing account"
+                        subTitle: "Connect to existing account",
+                        onDidSignIn: { isNewUser in
+                            handingDidSignIn(isNewUser: isNewUser)
+                        }
                     )
                     .presentationDetents([.medium])
             })
         }
     }
     
+    // MARK: -- View
     private var titleSection: some View {
         VStack {
             Text("AI Chat 👍")
@@ -81,8 +86,17 @@ struct WelcomeView: View {
         }
     }
     
+    // MARK: -- Funcation
     private func onSignInPressed() {
         showSignInView = true
+    }
+    
+    private func handingDidSignIn(isNewUser: Bool) {
+        if isNewUser {
+            // Do Nothing
+        } else {
+            root.updateViewState(showTabBarView: true)
+        }
     }
     
 }

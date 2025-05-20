@@ -7,39 +7,10 @@
 
 import SwiftUI
 import FirebaseAuth
+import SignInAppleAsync
 
 extension EnvironmentValues {
     @Entry var authService: FirebaseAuthService = FirebaseAuthService()
-}
-
-struct UserAuthInfo: Sendable {
-    let uid: String
-    let email: String?
-    let isAnonymous: Bool
-    let creationDate: Date?
-    let lastSingInDate: Date?
-    
-    init(
-        uid: String,
-        email: String? = nil,
-        isAnonymous: Bool = false,
-        creationDate: Date? = nil,
-        lastSingInDate: Date? = nil
-    ) {
-        self.uid = uid
-        self.email = email
-        self.isAnonymous = isAnonymous
-        self.creationDate = creationDate
-        self.lastSingInDate = lastSingInDate
-    }
-    
-    init(user: User) {
-        self.uid = user.uid
-        self.email = user.email
-        self.isAnonymous = user.isAnonymous
-        self.creationDate = user.metadata.creationDate
-        self.lastSingInDate = user.metadata.lastSignInDate
-    }
 }
 
 struct FirebaseAuthService {
@@ -53,8 +24,70 @@ struct FirebaseAuthService {
     
     func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
         let result = try await Auth.auth().signInAnonymously()
-        let user = UserAuthInfo(user: result.user)
-        let isNewUser = result.additionalUserInfo?.isNewUser ?? true
+        return result.asAuthInfo
+    }
+    
+    func signInWithApple() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
+        let helper = await SignInWithAppleHelper()
+        let response = try await helper.signIn()
+        
+        let credential = OAuthProvider.credential(
+            providerID: .apple,
+            idToken: response.token,
+            rawNonce: response.nonce
+        )
+        
+        // 如果已经有一个匿名账户的情况下 绑定匿名账户
+        if let user = Auth.auth().currentUser, user.isAnonymous {
+            do {
+                let result = try await user.link(with: credential)
+                return result.asAuthInfo
+            } catch let error as NSError {
+                let authError = AuthErrorCode(rawValue: error.code)
+                switch authError {
+                case .providerAlreadyLinked, .credentialAlreadyInUse:
+                    if let authCredential = error.userInfo["FIRAuthErrorUserInfoUpdatedCredentialKey"] as? AuthCredential {
+                        let result = try await Auth.auth().signIn(with: authCredential)
+                        return result.asAuthInfo
+                    }
+                default:
+                    break
+                }
+            }
+        }
+        
+        // 创建新的苹果账号和匿名账号
+        let result = try await Auth.auth().signIn(with: credential)
+        return result.asAuthInfo
+    }
+    
+    func signOut() throws {
+        try Auth.auth().signOut()
+    }
+    
+    func deleteAccount() async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthError.userNotFound
+        }
+        
+        try await user.delete()
+    }
+    
+    enum AuthError: LocalizedError {
+        case userNotFound
+        var errorDescription: String? {
+            switch self {
+            case .userNotFound:
+                return "Current Authenticated User Not Found"
+            }
+        }
+    }
+}
+
+extension AuthDataResult {
+    var asAuthInfo: (user: UserAuthInfo, isNewUser: Bool) {
+        let user = UserAuthInfo(user: user)
+        let isNewUser = additionalUserInfo?.isNewUser ?? true
         
         return (user, isNewUser)
     }
