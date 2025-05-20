@@ -5,7 +5,6 @@
 //  Created by sinduke on 5/20/25.
 //
 
-
 import SwiftUI
 
 enum LogLevel: String {
@@ -19,6 +18,6 @@ func dLog(_ message: @autoclosure () -> Any,
           function: String = #function,
           line: Int = #line) {
     #if DEBUG
-    print("DEBUG [\(level.rawValue)] [\(function):\(line)]: \(message())")
+    print("DEBUG: [\(level.rawValue)] [\(function):\(line)]: \(message())")
     #endif
 }
