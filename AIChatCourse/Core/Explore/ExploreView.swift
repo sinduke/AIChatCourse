@@ -12,17 +12,21 @@ struct ExploreView: View {
     @State private var featuredAvatars: [AvatarModel] = AvatarModel.mocks
     @State private var categories: [CharacterOption] = CharacterOption.allCases
     @State private var popularAvatars: [AvatarModel] = AvatarModel.mocks
+    
+    @State private var path: [NavigationPathOption] = []
+    
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
                 featuredSection
                 categoriesSection
                 popularSection
             }
             .navigationTitle("Explore")
+            .navigationDestinationForCoreModult(path: $path)
         }
     }
-    
+    // MARK: -- View
     private var featuredSection: some View {
         Section {
             ZStack {
@@ -33,7 +37,7 @@ struct ExploreView: View {
                         imageName: avatar.profileImageName
                     )
                     .anyButton {
-                        
+                        onAvatarPressed(avatar: avatar)
                     }
                 }
             }
@@ -48,14 +52,18 @@ struct ExploreView: View {
             ScrollView(.horizontal) {
                 HStack(spacing: 12) {
                     ForEach(categories, id: \.self) { category in
-                        CategoryCellView(
-                            title: category.rawValue.capitalized,
-                            imageName: Constants.randomImage
-                        )
-                        .scrollTargetLayout()
-                        .anyButton(.highlight) {
-                            
+                        
+                        if let imageName = popularAvatars.first(where: { $0.characterOption == category })?.profileImageName {
+                            CategoryCellView(
+                                title: category.rawValue.capitalized,
+                                imageName: imageName
+                            )
+                            .scrollTargetLayout()
+                            .anyButton(.highlight) {
+                                onCategoryPressed(category: category, imageName: imageName)
+                            }
                         }
+                        
                     }
                 }
             }
@@ -77,7 +85,7 @@ struct ExploreView: View {
                     subTitle: avatar.characterDescription
                 )
                 .anyButton(.highlight) {
-                    
+                    onAvatarPressed(avatar: avatar)
                 }
             }
         } header: {
@@ -86,6 +94,14 @@ struct ExploreView: View {
         .removeListRowFormatting()
     }
     
+    // MARK: -- Funcation
+    private func onAvatarPressed(avatar: AvatarModel) {
+        path.append(.chat(avatarId: avatar.avatarId))
+    }
+    
+    private func onCategoryPressed(category: CharacterOption, imageName: String) {
+        path.append(.category(category: category, imageName: imageName))
+    }
 }
 
 #Preview {

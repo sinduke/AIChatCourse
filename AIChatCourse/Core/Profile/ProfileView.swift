@@ -13,17 +13,20 @@ struct ProfileView: View {
     @State private var currentUser: UserModel? = .mock
     @State private var showCreateAvatarView: Bool = false
     @State private var myAvatars: [AvatarModel] = []
+    @State private var path: [NavigationPathOption] = []
 //    @State private var myAvatars: [AvatarModel] = AvatarModel.mocks
     @State private var isLoading: Bool = true
     
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List {
+                
                 myInfoSection
                 myAvatarsSection
 
             }
             .navigationTitle("Profile")
+            .navigationDestinationForCoreModult(path: $path)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     settingButton
@@ -40,7 +43,7 @@ struct ProfileView: View {
             await loadData()
         }
     }
-
+    // MARK: -- View
     private var myAvatarsSection: some View {
         Section {
             if myAvatars.isEmpty {
@@ -64,7 +67,7 @@ struct ProfileView: View {
                         subTitle: nil
                     )
                     .anyButton(.highlight, action: {
-                        
+                        onAvatarPressed(avatar: avatar)
                     })
                     .removeListRowFormatting()
                 }
@@ -107,6 +110,7 @@ struct ProfileView: View {
         .removeListRowFormatting()
     }
     
+    // MARK: -- Funcation
     private func onSettingButtonPressed() {
         showSettingView = true
     }
@@ -124,7 +128,10 @@ struct ProfileView: View {
         try? await Task.sleep(for: .seconds(5))
         isLoading = false
         myAvatars = AvatarModel.mocks
-//        myAvatars = []
+    }
+    
+    private func onAvatarPressed(avatar: AvatarModel) {
+        path.append(.chat(avatarId: avatar.avatarId))
     }
 }
 

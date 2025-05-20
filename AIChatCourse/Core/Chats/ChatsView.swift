@@ -10,26 +10,33 @@ import SwiftUI
 struct ChatsView: View {
     
     @State private var chats: [ChatModel] = ChatModel.mocks
+    @State private var path: [NavigationPathOption] = []
+    
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List(chats) { chat in
                 ChatRowCellViewBuilder(
                     currentUserId: nil, /// "TOsDO  Add Cuid"
                     chat: chat) {
                         try? await Task.sleep(for: .seconds(1))
-                        return .mock
+                        return AvatarModel.mocks.randomElement()
                     } getLastChatMessage: {
                         try? await Task.sleep(for: .seconds(2))
-                        return .mock
+                        return ChatMessageModel.mocks.randomElement()
                     }
                     .anyButton(.highlight, action: {
-                        
+                        onChatPressed(chat: chat)
                     })
                     .removeListRowFormatting()
-
             }
-                .navigationTitle("ChatViewNavTitle")
+            .navigationTitle("ChatView")
+            .navigationDestinationForCoreModult(path: $path)
         }
+    }
+    
+    // MARK: -- Funcation
+    private func onChatPressed(chat: ChatModel) {
+        path.append(.chat(avatarId: chat.avatarId))
     }
 }
 
