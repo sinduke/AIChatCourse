@@ -37,24 +37,6 @@ struct OnboardingCompletedView: View {
         .toolbar(.hidden, for: .navigationBar)
     }
     
-//    func onFinishButtonPressed() {
-//        isCompletingSetupProfile = true
-//        Task {
-//            do {
-//                let hex = selectColor.toHex() ?? Constants.accountColor
-//                
-//                dLog("Firebase UID: \(Auth.auth().currentUser?.uid ?? "nil")")
-//                dLog("UserManager UID: \(userManager.currentUser?.userId ?? "nil")")
-//                
-//                try await  userManager.makeOnBoardingCompleteForCurrentUser(profileColorHex: hex)
-//                isCompletingSetupProfile = false
-//                root.updateViewState(showTabBarView: true)
-//            } catch {
-//                dLog(error, .error)
-//            }
-//        }
-//    }
-    
     func onFinishButtonPressed() {
         isCompletingSetupProfile = true
         Task {
@@ -72,5 +54,5 @@ struct OnboardingCompletedView: View {
 #Preview {
     OnboardingCompletedView(selectColor: .mint)
         .environment(AppState())
-        .environment(UserManager(service: MockService()))
+        .environment(UserManager(services: MockUserServices(user: nil)))
 }

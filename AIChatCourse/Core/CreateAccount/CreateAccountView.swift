@@ -48,7 +48,6 @@ struct CreateAccountView: View {
         Task {
             do {
                 let result = try await authManager.signInWithApple()
-                dLog("使用Apple登录成功!")
                 
                 try await userManager.logIn(auth: result.user, isNewUser: result.isNewUser)
                 onDidSignIn?(result.isNewUser)

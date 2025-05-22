@@ -42,7 +42,7 @@ public extension Color {
     func toHex(includeAlpha: Bool = false) -> String? {
         // swiftlint:disable identifier_name
 #if canImport(UIKit)
-        var uiColor = UIColor(self).resolvedColor(with: UITraitCollection.current)
+        let uiColor = UIColor(self).resolvedColor(with: UITraitCollection.current)
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
         guard uiColor.getRed(&r, green: &g, blue: &b, alpha: &a) else { return nil }
 #elseif canImport(AppKit)

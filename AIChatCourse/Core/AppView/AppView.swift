@@ -47,24 +47,16 @@ struct AppView: View {
     // MARK: -- Funcation
     private func checkUserStatus() async {
         if let user = authManager.auth {
-            // 用户已经登录
-            dLog("用户已经登录了: \(user.uid)")
-            
             do {
                 try await userManager.logIn(auth: user, isNewUser: false)
             } catch {
-                dLog("Failed to login to auth for existing user \(error)")
-                
                 try? await Task.sleep(for: .seconds(5))
                 await checkUserStatus()
             }
             
         } else {
-            // 用户尚未登录
             do {
                 let result = try await authManager.signInAnonymously()
-                dLog("DEFAULT: anonymous sign in success: \(result.user.uid)") // default = info
-                
                 try await userManager.logIn(auth: result.user, isNewUser: result.isNewUser)
             } catch {
                 dLog(error)
@@ -78,11 +70,11 @@ struct AppView: View {
 #Preview("AppView - Tabbar") {
     AppView(appState: AppState(showTabBar: true))
         .environment(AuthManager(service: MockAuthService(user: .mock())))
-        .environment(UserManager(service: MockService(user: .mock)))
+        .environment(UserManager(services: MockUserServices(user: .mock)))
 }
 
 #Preview("AppView - Onboarding") {
     AppView(appState: AppState(showTabBar: false))
         .environment(AuthManager(service: MockAuthService(user: nil)))
-        .environment(UserManager(service: MockService(user: nil)))
+        .environment(UserManager(services: MockUserServices(user: nil)))
 }

@@ -28,7 +28,6 @@ class AuthManager {
                 self.listener = listenerse
             }) {
                 self.auth = value
-                dLog("Auth 监听成功: \(value?.uid ?? "没有用户uid")")
             }
         }
     }
