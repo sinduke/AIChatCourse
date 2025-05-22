@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct OnboardingCompletedView: View {
     @State private var isCompletingSetupProfile: Bool = false
     @Environment(AppState.self) private var root
+    @Environment(UserManager.self) private var userManager
     var selectColor: Color = .orange
     var body: some View {
         VStack(alignment: .leading, spacing: 12.0) {
@@ -35,17 +37,40 @@ struct OnboardingCompletedView: View {
         .toolbar(.hidden, for: .navigationBar)
     }
     
+//    func onFinishButtonPressed() {
+//        isCompletingSetupProfile = true
+//        Task {
+//            do {
+//                let hex = selectColor.toHex() ?? Constants.accountColor
+//                
+//                dLog("Firebase UID: \(Auth.auth().currentUser?.uid ?? "nil")")
+//                dLog("UserManager UID: \(userManager.currentUser?.userId ?? "nil")")
+//                
+//                try await  userManager.makeOnBoardingCompleteForCurrentUser(profileColorHex: hex)
+//                isCompletingSetupProfile = false
+//                root.updateViewState(showTabBarView: true)
+//            } catch {
+//                dLog(error, .error)
+//            }
+//        }
+//    }
+    
     func onFinishButtonPressed() {
         isCompletingSetupProfile = true
         Task {
-            try? await Task.sleep(for: .seconds(3))
+            let hex = selectColor.asHex()
+            try await userManager.makeOnBoardingCompleteForCurrentUser(profileColorHex: hex)
+            
+            // dismiss screen
             isCompletingSetupProfile = false
             root.updateViewState(showTabBarView: true)
         }
     }
+    
 }
 
 #Preview {
     OnboardingCompletedView(selectColor: .mint)
         .environment(AppState())
+        .environment(UserManager(service: MockService()))
 }

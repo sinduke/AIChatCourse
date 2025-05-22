@@ -26,6 +26,6 @@ func dLog(_ message: @autoclosure () -> Any,
           function: String = #function,
           line: Int = #line) {
     #if DEBUG
-    print("DEBUG: [\(level.rawValue)] [\(function):\(line)]: \(message())")
+    debugPrint("DEBUG: [\(level.rawValue)] [\(function):\(line)]: \(message())")
     #endif
 }
