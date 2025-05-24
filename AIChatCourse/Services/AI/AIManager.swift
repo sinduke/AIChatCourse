@@ -7,16 +7,12 @@
 
 import SwiftUI
 
-
-
-
-
 @MainActor
 @Observable
 class AIManager {
-    private let service: AIservice
+    private let service: AIService
     
-    init(service: AIservice) {
+    init(service: AIService) {
         self.service = service
     }
     

@@ -8,7 +8,7 @@
 import SwiftUI
 import OpenAI
 
-struct OpenAIService: AIservice {
+struct OpenAIService: AIService {
     
     var openAI: OpenAI {
         OpenAI(

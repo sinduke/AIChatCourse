@@ -21,8 +21,8 @@ struct TextValidationHelper {
         }
     }
 
-    static func checkIfTextIsValid(text: String) throws {
-        let minimumCharacterContent = 3
+    static func checkIfTextIsValid(text: String, minimumCharacterContent: Int = 4) throws {
+
         guard text.count >= minimumCharacterContent else {
             throw TextValidationError.notEnoughCharacters(min: minimumCharacterContent)
         }
