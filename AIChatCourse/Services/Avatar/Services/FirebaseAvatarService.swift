@@ -1,3 +1,10 @@
+//
+//  FirebaseAvatarService.swift
+//  AIChatCourse
+//
+//  Created by sinduke on 5/24/25.
+//
+
 import FirebaseFirestore
 import SwiftfulFirestore
 

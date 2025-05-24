@@ -9,21 +9,45 @@ import SwiftUI
 
 struct ExploreView: View {
     
-    @State private var featuredAvatars: [AvatarModel] = AvatarModel.mocks
+    @Environment(AvatarManager.self) private var avatarManager
+    
+//    @State private var featuredAvatars: [AvatarModel] = AvatarModel.mocks
+    @State private var featuredAvatars: [AvatarModel] = []
     @State private var categories: [CharacterOption] = CharacterOption.allCases
-    @State private var popularAvatars: [AvatarModel] = AvatarModel.mocks
+//    @State private var popularAvatars: [AvatarModel] = AvatarModel.mocks
+    @State private var popularAvatars: [AvatarModel] = []
     
     @State private var path: [NavigationPathOption] = []
     
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                featuredSection
-                categoriesSection
-                popularSection
+                
+                if featuredAvatars.isEmpty && popularAvatars.isEmpty {
+                    ProgressView()
+                        .padding(40)
+                        .frame(maxWidth: .infinity)
+                        .removeListRowFormatting()
+                }
+                
+                if !featuredAvatars.isEmpty {
+                    featuredSection
+                }
+                
+                if !popularAvatars.isEmpty {
+                    categoriesSection
+                    popularSection
+                }
+                
             }
             .navigationTitle("Explore")
             .navigationDestinationForCoreModult(path: $path)
+            .task {
+                await loadFeaturedAvatar()
+            }
+            .task {
+                await loadPopularAvatar()
+            }
         }
     }
     // MARK: -- View
@@ -95,6 +119,26 @@ struct ExploreView: View {
     }
     
     // MARK: -- Funcation
+    private func loadFeaturedAvatar() async {
+        guard featuredAvatars.isEmpty else { return }
+        do {
+            featuredAvatars = try await avatarManager.getFeaturedAvatars()
+            dLog("📌 Featured avatars: \(featuredAvatars.map(\.characterOption))")
+        } catch {
+            dLog("Error loading feature avatars: \(error)")
+        }
+    }
+    
+    private func loadPopularAvatar() async {
+        guard popularAvatars.isEmpty else { return }
+        do {
+            popularAvatars = try await avatarManager.getPopularAvatars()
+            dLog("📌 Featured avatars: \(featuredAvatars.map(\.characterOption))")
+        } catch {
+            dLog("Error loading popular avatars: \(error)")
+        }
+    }
+    
     private func onAvatarPressed(avatar: AvatarModel) {
         path.append(.chat(avatarId: avatar.avatarId))
     }
@@ -106,4 +150,10 @@ struct ExploreView: View {
 
 #Preview {
     ExploreView()
+        .environment(AvatarManager(service: MockAvatarService()))
 }
+
+#Preview("RealData", body: {
+    ExploreView()
+        .environment(AvatarManager(service: FirebaseAvatarService()))
+})

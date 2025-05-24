@@ -1,3 +1,12 @@
+//
+//  MockAvatarService.swift
+//  AIChatCourse
+//
+//  Created by sinduke on 5/24/25.
+//
+
+import SwiftUI
+
 struct MockAvatarService: AvatarService {
     func getFeaturedAvatars() async throws -> [AvatarModel] {
         try? await Task.sleep(for: .seconds(1))
