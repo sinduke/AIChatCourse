@@ -1,5 +1,5 @@
 //
-//  SwiftDataLocalAvatarPresistance.swift
+//  SwiftDataLocalAvatarPersistence.swift
 //  AIChatCourse
 //
 //  Created by sinduke on 5/24/25.
@@ -9,7 +9,7 @@ import SwiftData
 import SwiftUI
 
 @MainActor
-struct SwiftDataLocalAvatarPresistance: LocalAvatarPresistance {
+struct SwiftDataLocalAvatarPersistence: LocalAvatarPersistence {
     
     private let container: ModelContainer
     private var mainContext: ModelContext {
