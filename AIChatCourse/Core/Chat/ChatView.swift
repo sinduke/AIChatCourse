@@ -125,7 +125,8 @@ struct ChatView: View {
         do {
             let avatar = try await avatarManager.getAvatar(id: avatarId)
             self.avatar = avatar
-            try avatarManager.addRecentAvatar(avatar: avatar)
+            // 是否失败无所谓 数据统计类的
+            try? await avatarManager.addRecentAvatar(avatar: avatar)
         } catch {
             dLog("Error loading avatar: \(error)")
         }

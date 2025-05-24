@@ -19,6 +19,7 @@ class AvatarEntry {
     var profileImageName: String?
     var authorId: String?
     var dateCreated: Date?
+    var clickCount: Int?
     var dateAdd: Date
     
     init(from model: AvatarModel) {
@@ -30,6 +31,7 @@ class AvatarEntry {
         self.profileImageName = model.profileImageName
         self.authorId = model.authorId
         self.dateCreated = model.dateCreated
+        self.clickCount = model.clickCount
         self.dateAdd = .now
     }
     
@@ -42,7 +44,8 @@ class AvatarEntry {
             characterLocation: characterLocation,
             profileImageName: profileImageName,
             authorId: authorId,
-            dateCreated: dateCreated
+            dateCreated: dateCreated,
+            clickCount: clickCount
         )
     }
 }
