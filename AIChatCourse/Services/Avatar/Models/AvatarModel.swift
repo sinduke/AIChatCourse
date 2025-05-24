@@ -22,6 +22,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
     private(set) var profileImageName: String?
     let authorId: String?
     let dateCreated: Date?
+    let clickCount: Int?
     
     init(
         avatarId: String,
@@ -31,7 +32,8 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
         characterLocation: CharacterLocation? = nil,
         profileImageName: String? = nil,
         authorId: String? = nil,
-        dateCreated: Date? = nil
+        dateCreated: Date? = nil,
+        clickCount: Int? = nil
     ) {
         self.avatarId = avatarId
         self.name = name
@@ -41,6 +43,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
         self.profileImageName = profileImageName
         self.authorId = authorId
         self.dateCreated = dateCreated
+        self.clickCount = clickCount
     }
     
     // 模型内部自己处理数据的更新
@@ -65,6 +68,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
         case profileImageName = "profile_image_name"
         case authorId = "author_id"
         case dateCreated = "date_created"
+        case clickCount = "click_count"
     }
     
     static var mocks: [Self] {
@@ -78,7 +82,8 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 characterLocation: .park,
                 profileImageName: Constants.randomImage,
                 authorId: "U001",
-                dateCreated: now
+                dateCreated: now,
+                clickCount: 10
             ),
             AvatarModel(
                 avatarId: "A002",
@@ -88,7 +93,8 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 characterLocation: .city,
                 profileImageName: Constants.randomImage,
                 authorId: "U002",
-                dateCreated: now.addingTimeInterval(-3_600)          // 1 h 前
+                dateCreated: now.addingTimeInterval(-3_600),
+                clickCount: 101// 1 h 前
             ),
             AvatarModel(
                 avatarId: "A003",
@@ -98,7 +104,8 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 characterLocation: .museum,
                 profileImageName: Constants.randomImage,
                 authorId: "U003",
-                dateCreated: now.addingTimeInterval(-7_200)          // 2 h 前
+                dateCreated: now.addingTimeInterval(-7_200),
+                clickCount: 103// 2 h 前
             ),
             AvatarModel(
                 avatarId: "A004",
@@ -108,7 +115,8 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 characterLocation: .forest,
                 profileImageName: Constants.randomImage,
                 authorId: "U004",
-                dateCreated: now.addingTimeInterval(-10_800)         // 3 h 前
+                dateCreated: now.addingTimeInterval(-10_800),
+                clickCount: 11// 3 h 前
             ),
             AvatarModel(
                 avatarId: "A005",
@@ -118,7 +126,8 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 characterLocation: .mall,
                 profileImageName: Constants.randomImage,
                 authorId: "U005",
-                dateCreated: now.addingTimeInterval(-14_400)
+                dateCreated: now.addingTimeInterval(-14_400),
+                clickCount: 9
             ),
             AvatarModel(
                 avatarId: "A006",
@@ -128,7 +137,8 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 characterLocation: .desert,
                 profileImageName: Constants.randomImage,
                 authorId: "U006",
-                dateCreated: now.addingTimeInterval(-18_000)
+                dateCreated: now.addingTimeInterval(-18_000),
+                clickCount: 10
             ),
             AvatarModel(
                 avatarId: "A007",
@@ -138,17 +148,19 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 characterLocation: .city,
                 profileImageName: Constants.randomImage,
                 authorId: "U007",
-                dateCreated: now.addingTimeInterval(-21_600)
+                dateCreated: now.addingTimeInterval(-21_600),
+                clickCount: 99
             ),
             AvatarModel(
-                avatarId: "A008",
+                avatarId: "A008", 
                 name: "Hank",
                 characterOption: .man,
                 characterAction: .drinking,
                 characterLocation: .park,
                 profileImageName: Constants.randomImage,
                 authorId: "U008",
-                dateCreated: now.addingTimeInterval(-25_200)
+                dateCreated: now.addingTimeInterval(-25_200),
+                clickCount: 5
             ),
             AvatarModel(
                 avatarId: "A009",
@@ -158,7 +170,8 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 characterLocation: .space,
                 profileImageName: Constants.randomImage,
                 authorId: "U009",
-                dateCreated: now.addingTimeInterval(-28_800)
+                dateCreated: now.addingTimeInterval(-28_800),
+                clickCount: 202
             ),
             AvatarModel(
                 avatarId: "A010",
@@ -168,7 +181,8 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 characterLocation: .forest,
                 profileImageName: Constants.randomImage,
                 authorId: "U010",
-                dateCreated: now.addingTimeInterval(-32_400)
+                dateCreated: now.addingTimeInterval(-32_400),
+                clickCount: 0
             )
         ]
     }
