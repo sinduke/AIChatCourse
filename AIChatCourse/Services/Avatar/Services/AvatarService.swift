@@ -1,3 +1,12 @@
+//
+//  AvatarService.swift
+//  AIChatCourse
+//
+//  Created by sinduke on 5/24/25.
+//
+
+import SwiftUI
+
 protocol AvatarService: Sendable {
     func createAvatar(avatar: AvatarModel, image: UIImage) async throws
     func getFeaturedAvatars() async throws -> [AvatarModel]
