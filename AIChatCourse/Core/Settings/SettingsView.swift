@@ -181,7 +181,7 @@ struct SettingsView: View {
                 async let deleteUser: () = userManager.deleteCurrentUser()
                 async let deleteAvatars: () = avatarManager.removeAuthorIdFromAllAvatars(userId: uid)
                 
-                let (_, _, _,) = await (try deleteAuth, try deleteUser, try deleteAvatars)
+                let (_, _, _) = await (try deleteAuth, try deleteUser, try deleteAvatars)
                 
                 await onDismissScreen()
             } catch {

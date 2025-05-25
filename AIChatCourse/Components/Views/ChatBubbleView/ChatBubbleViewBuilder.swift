@@ -16,7 +16,7 @@ struct ChatBubbleViewBuilder: View {
     var body: some View {
         ZStack {
             ChatBubbleView(
-                text: message.content ?? "",
+                text: message.content?.content ?? "",
                 textColor: isCurrentUser ? .white : .primary,
                 backgroundColor: isCurrentUser ? .accent : Color(uiColor: .systemGray6),
                 showImage: !isCurrentUser,
@@ -43,7 +43,7 @@ struct ChatBubbleViewBuilder: View {
                     id: UUID().uuidString,
                     chatId: UUID().uuidString,
                     authorId: UUID().uuidString,
-                    content: "This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.",
+                    content: AIChatModel(role: .user, content: "This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text."),
                     seenByIds: [],
                     dateCreated: .now
                 )
@@ -54,7 +54,7 @@ struct ChatBubbleViewBuilder: View {
                     id: UUID().uuidString,
                     chatId: UUID().uuidString,
                     authorId: UUID().uuidString,
-                    content: "This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.",
+                    content: AIChatModel(role: .assistant, content: "This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text.This is a lang text."),
                     seenByIds: [],
                     dateCreated: .now
                 ), isCurrentUser: true

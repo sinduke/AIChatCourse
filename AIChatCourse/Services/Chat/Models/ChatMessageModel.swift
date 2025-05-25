@@ -8,11 +8,11 @@
 import Foundation
 
 // MARK: - ChatMessageModel
-struct ChatMessageModel: Identifiable, Hashable {
+struct ChatMessageModel: Identifiable {
     let id: String
     let chatId: String
     let authorId: String?
-    let content: String?
+    let content: AIChatModel?
     let seenByIds: [String]?
     let dateCreated: Date?
     
@@ -20,7 +20,7 @@ struct ChatMessageModel: Identifiable, Hashable {
         id: String = UUID().uuidString,
         chatId: String,
         authorId: String? = nil,
-        content: String? = nil,
+        content: AIChatModel? = nil,
         seenByIds: [String]? = nil,
         dateCreated: Date? = Date()
     ) {
@@ -52,35 +52,35 @@ extension ChatMessageModel {
             ChatMessageModel(
                 chatId: "A001",
                 authorId: "U001",
-                content: "Hello, how are you?",
+                content: AIChatModel(role: .user, content: "Hello, how are you?"),
                 seenByIds: ["U002", "U003"],
                 dateCreated: now.addingTimeInterval(minutes: -5)
             ),
             ChatMessageModel(
                 chatId: "A001",
                 authorId: "U002",
-                content: "I'm good, thanks! And you?",
+                content: AIChatModel(role: .assistant, content: "I'm good, thanks! And you?"),
                 seenByIds: ["U001", "U003"],
                 dateCreated: now.addingTimeInterval(minutes: -4)
             ),
             ChatMessageModel(
                 chatId: "A002",
                 authorId: "U003",
-                content: "Anyone up for coffee later?",
+                content: AIChatModel(role: .assistant, content: "Anyone up for coffee later?"),
                 seenByIds: [],
                 dateCreated: now.addingTimeInterval(minutes: -3)
             ),
             ChatMessageModel(
                 chatId: "A001",
                 authorId: "U001",
-                content: "Doing great. Working on the SwiftUI project.",
+                content: AIChatModel(role: .user, content: "Doing great. Working on the SwiftUI project."),
                 seenByIds: nil,
                 dateCreated: now.addingTimeInterval(minutes: -2)
             ),
             ChatMessageModel(
                 chatId: "A002",
                 authorId: "U004",
-                content: "Sure, let's meet at 4pm ☕️",
+                content: AIChatModel(role: .assistant, content: "Sure, let's meet at 4pm ☕️"),
                 seenByIds: ["U003"],
                 dateCreated: now.addingTimeInterval(minutes: -1)
             )
