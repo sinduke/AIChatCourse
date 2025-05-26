@@ -110,7 +110,7 @@ struct ChatView: View {
     
     private var textFieldSection: some View {
         TextField("Say something", text: $textFieldText)
-            .keyboardType(.alphabet)
+//            .keyboardType(.alphabet)
             .autocorrectionDisabled()
             .padding(12)
             .padding(.trailing, 60)

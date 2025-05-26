@@ -28,7 +28,6 @@ struct AsyncCallToActionButton: View {
     }
 }
 
-#if DEBUG
 private struct PreviewView: View {
     @State private var isLoading: Bool = false
     var body: some View {
@@ -46,7 +45,6 @@ private struct PreviewView: View {
             }
     }
 }
-#endif
 
 #Preview {
     PreviewView()
