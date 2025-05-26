@@ -41,6 +41,10 @@ struct ChatMessageModel: Identifiable, Codable {
         case dateCreated = "date_created"
     }
     
+    var dateCreatedCalculated: Date {
+        dateCreated ?? .distantPast
+    }
+    
     static func newUserSendMessage(chatId: String, userId: String, message: AIChatModel) -> ChatMessageModel {
         ChatMessageModel(
             id: UUID().uuidString,

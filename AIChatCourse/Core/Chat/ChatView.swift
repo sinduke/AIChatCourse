@@ -14,7 +14,7 @@ struct ChatView: View {
     @Environment(ChatManager.self) private var chatManager
     @Environment(UserManager.self) private var userManager
     
-    @State private var chatMessages: [ChatMessageModel] = ChatMessageModel.mocks
+    @State private var chatMessages: [ChatMessageModel] = []
     @State private var currentUser: UserModel?
     @State private var avatar: AvatarModel?
     @State private var textFieldText: String = ""
@@ -61,6 +61,11 @@ struct ChatView: View {
         }
         .task {
             await loadAvatar()
+        }
+        .task {
+            // loadHistoryMessage
+            await loadChat()
+            await listenForChatMessage()
         }
         .onAppear {
             loadCurrentUser()
@@ -135,9 +140,47 @@ struct ChatView: View {
     }
     
     // MARK: -- Func
+    private func getChatId() throws -> String {
+        guard let chat else {
+            throw ChatViewError.noChat
+        }
+        
+        return chat.id
+    }
+    
+    private func listenForChatMessage() async {
+        do {
+            let chatId = try getChatId()
+            
+            for try await value in chatManager.streamChatMessages(chatId: chatId) {
+                chatMessages = value.sorted(by: { $0.dateCreatedCalculated < $1.dateCreatedCalculated })
+                scrollPosition = chatMessages.last?.id
+            }
+        } catch {
+            dLog("Faild to attach chat message listener.")
+        }
+    }
+    
+    private func loadChat() async {
+        do {
+            let uid = try authManager.getAuthId()
+            chat = try await chatManager.getChat(userId: uid, avatarId: avatarId)
+            dLog("Success Loading Chat.")
+        } catch {
+            dLog("Error Loading Chat!", .error)
+        }
+    }
+    
     private func createNewChat(chatId: String) async throws -> ChatModel {
-        let newChat = ChatModel.new(chatId: chatId, avatarId: avatarId)
+        let newChat = ChatModel.new(userId: chatId, avatarId: avatarId)
         try await chatManager.createNewChat(chat: newChat)
+        
+        defer {
+            Task {
+                await listenForChatMessage()
+            }
+        }
+        
         return newChat
     }
     
@@ -180,10 +223,6 @@ struct ChatView: View {
                 
                 // 上传用户聊天
                 try await chatManager.addChatMessage(chatId: chat.id, message: message)
-                chatMessages.append(message)
-                
-                // 清理textfield并滚动到底部
-                scrollPosition = message.id
                 textFieldText = ""
                 
                 // 创建AI回复内容
@@ -191,7 +230,17 @@ struct ChatView: View {
                 defer {
                     isGeneratingResponse = false
                 }
-                let aiChats = chatMessages.compactMap({ $0.content })
+                var aiChats = chatMessages.compactMap({ $0.content })
+                
+                if let avatarDescription = avatar?.characterDescription {
+                    let systemMseeage = AIChatModel(
+                        role: .system,
+                        content: "You are a \(avatarDescription) with intelligence of an AI. We are having an very casual converstant. You are my friend."
+                    )
+                    aiChats.insert(systemMseeage, at: 0)
+                }
+                
+                // Core 执行
                 let response = try await aiManager.generateText(chats: aiChats)
                 
                 // 创建AI回复信息
@@ -199,7 +248,6 @@ struct ChatView: View {
                 
                 // 上传AI聊天
                 try await chatManager.addChatMessage(chatId: chat.id, message: newAIMessage)
-                chatMessages.append(newAIMessage)
             } catch {
                 showAlert = AnyAppAlert(error: error)
             }
@@ -251,6 +299,10 @@ struct ChatView: View {
 }
 
 #Preview("AI 生成失败") {
+    /**
+     步骤:
+     输入合法的(可验证的消息内容 点击发送 1秒后查看结果)
+     */
     NavigationStack {
         ChatView()
             .environment(AIManager(service: MockAIService(delay: 1, showError: true)))

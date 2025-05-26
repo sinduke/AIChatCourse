@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
+import IdentifiableByString
 
-struct ChatModel: Identifiable, Codable {
+struct ChatModel: Identifiable, Codable, StringIdentifiable {
     let id: String
     let userId: String
     let avatarId: String
@@ -36,10 +37,14 @@ struct ChatModel: Identifiable, Codable {
         self.dateModified = dateModified
     }
     
-    static func new(chatId: String, avatarId: String) -> Self {
+    static func chatId(userId: String, avatarId: String) -> String {
+        "\(userId)_\(avatarId)"
+    }
+    
+    static func new(userId: String, avatarId: String) -> Self {
         Self(
-            id: "\(chatId)_\(avatarId)",
-            userId: chatId,
+            id: chatId(userId: userId, avatarId: avatarId),
+            userId: userId,
             avatarId: avatarId,
             dateCreated: .now,
             dateModified: .now
