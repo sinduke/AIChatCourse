@@ -91,28 +91,28 @@ extension ChatMessageModel {
                 authorId: UserAuthInfo.mock().uid,
                 content: AIChatModel(role: .user, content: "Hello, how are you?"),
                 seenByIds: ["U002", "U003"],
-                dateCreated: now.addingTimeInterval(minutes: -5)
+                dateCreated: now.addingTimeInterval(-2 * 60 * 60)
             ),
             ChatMessageModel(
                 chatId: "A001",
                 authorId: AvatarModel.mock.avatarId,
                 content: AIChatModel(role: .assistant, content: "I'm good, thanks! And you?"),
                 seenByIds: ["U001", "U003"],
-                dateCreated: now.addingTimeInterval(minutes: -4)
+                dateCreated: now.addingTimeInterval(minutes: -74)
             ),
             ChatMessageModel(
                 chatId: "A002",
                 authorId: UserAuthInfo.mock().uid,
                 content: AIChatModel(role: .assistant, content: "Anyone up for coffee later?"),
                 seenByIds: [],
-                dateCreated: now.addingTimeInterval(minutes: -3)
+                dateCreated: now.addingTimeInterval(minutes: -63)
             ),
             ChatMessageModel(
                 chatId: "A001",
                 authorId: UserAuthInfo.mock().uid,
                 content: AIChatModel(role: .user, content: "Doing great. Working on the SwiftUI project."),
                 seenByIds: nil,
-                dateCreated: now.addingTimeInterval(minutes: -2)
+                dateCreated: now.addingTimeInterval(minutes: -52)
             ),
             ChatMessageModel(
                 chatId: "A002",

@@ -72,7 +72,8 @@ class MockChatService: ChatService {
         try? await Task.sleep(for: .seconds(delay))
         try tryShowError()
         
-        return ChatMessageModel.mocks.randomElement()
+//        return ChatMessageModel.mocks.randomElement()
+        return messages.filter { $0.chatId == chatId }.last
     }
     
     func deleteChat(chatId: String) async throws {
@@ -84,6 +85,10 @@ class MockChatService: ChatService {
     }
     
     func reportChat(report: ReportModel) async throws {
+        
+    }
+    
+    func markChatMessageAsSeen(chatId: String, messageId: String, userId: String) async throws {
         
     }
 }

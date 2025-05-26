@@ -78,6 +78,11 @@ struct ChatView: View {
         ScrollView {
             LazyVStack(spacing: 24) {
                 ForEach(chatMessages) { message in
+                    
+                    if messageIsDelayed(message: message) {
+                        timestampView(date: message.dateCreatedCalculated)
+                    }
+                    
                     let isCurrentUser = message.authorId == authManager.auth?.uid
                     ChatBubbleViewBuilder(
                         message: message,
@@ -86,6 +91,9 @@ struct ChatView: View {
                         imageName: isCurrentUser ? nil : avatar?.profileImageName,
                         onImagePressed: onAvatarImagePressed
                     )
+                    .onAppear(perform: {
+                        onMessageDidAppear(message: message)
+                    })
                     .id(message.id)
                 }
             }
@@ -93,6 +101,8 @@ struct ChatView: View {
             .padding(8)
             .rotationEffect(.degrees(180))
         }
+        .scrollIndicators(.hidden)
+
         .rotationEffect(.degrees(180))
         .scrollPosition(id: $scrollPosition, anchor: .center)
         .animation(.default, value: scrollPosition)
@@ -128,6 +138,18 @@ struct ChatView: View {
     }
     
     // MARK: -- FuncOfView
+    private func timestampView(date: Date) -> some View {
+        Group {
+            Text(date.formatted(date: .abbreviated, time: .omitted))
+            +
+            Text(" • ")
+            +
+            Text(date.formatted(date: .omitted, time: .shortened))
+        }
+        .foregroundStyle(.secondary)
+        .font(.callout)
+    }
+    
     private func profileModal(avatar: AvatarModel) -> some View {
         ProfileModalView(
             imageName: avatar.profileImageName,
@@ -141,6 +163,55 @@ struct ChatView: View {
     }
     
     // MARK: -- Func
+    private func onMessageDidAppear(message: ChatMessageModel) {
+        Task {
+            do {
+                let uid = try authManager.getAuthId()
+                let chatId = try getChatId()
+                
+                guard !message.hasBeenSeenBy(userId: uid) else {
+                    return
+                }
+                
+                try await chatManager.markChatMessageAsSeen(chatId: chatId, messageId: message.id, userId: uid)
+                
+            } catch {
+                dLog("Faild to mark message as seen. Error: \(error)")
+            }
+        }
+    }
+    
+    /// 判定「当前消息」与「上一条消息」之间是否 **存在超过 45 分钟的时间间隔**，
+    /// 以此判断该消息是否应被视为「长时间停顿后的消息」。
+    ///
+    /// 逻辑说明：
+    /// 1. 先在 `chatMessages` 数组里找到当前消息的位置；
+    /// 2. 若它本身是第一条消息，或找不到上一条消息，则直接返回 `false`；
+    /// 3. 计算当前消息与上一条消息的时间差（单位：秒）；
+    /// 4. 若时间差 **大于 45 分钟**（60 × 45 = 2 700 秒），返回 `true`，
+    ///    否则返回 `false`。
+    ///
+    /// - Parameter message: 需要判断的这条 `ChatMessageModel`。
+    /// - Returns:
+    ///   `true` — 当前消息与上一条消息的时间间隔超过 45 分钟；
+    ///   `false` — 无上一条消息可比较，或时间间隔未超过阈值。
+    private func messageIsDelayed(message: ChatMessageModel) -> Bool {
+        let currentMessageDate = message.dateCreatedCalculated
+        // 找到当前消息在数组中的索引，并确认前一条消息存在(第一条或者越界都不算)
+        guard let index = chatMessages.firstIndex(where: { $0.id == message.id }),
+              chatMessages.indices.contains(index - 1) else {
+            return false
+        }
+        
+        let previousMessageDate = chatMessages[index - 1].dateCreatedCalculated
+        let timeDiff = currentMessageDate.timeIntervalSince(previousMessageDate)
+        
+        // Thrshold = 60秒 * 45 = 45分钟
+        let thrshold: TimeInterval = 60 * 45
+        
+        return timeDiff > thrshold
+    }
+    
     private func getChatId() throws -> String {
         guard let chat else {
             throw ChatViewError.noChat

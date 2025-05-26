@@ -52,4 +52,8 @@ class ChatManager {
         let reportChat = ReportModel.new(chatId: chatId, userId: userId)
         try await service.reportChat(report: reportChat)
     }
+    
+    func markChatMessageAsSeen(chatId: String, messageId: String, userId: String) async throws {
+        try await service.markChatMessageAsSeen(chatId: chatId, messageId: messageId, userId: userId)
+    }
 }

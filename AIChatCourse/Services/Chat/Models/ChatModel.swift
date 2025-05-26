@@ -62,6 +62,12 @@ extension ChatModel {
         let now = Date()
         return [
             ChatModel(
+                userId: UserAuthInfo.previewUID,       // 固定
+                avatarId: AvatarModel.mocks[0].avatarId, // 固定
+                dateCreated: now,
+                dateModified: now
+            ),
+            ChatModel(
                 userId: UserAuthInfo.mock().uid,
                 avatarId: AvatarModel.mocks.randomElement()!.avatarId,
                 dateCreated: now,

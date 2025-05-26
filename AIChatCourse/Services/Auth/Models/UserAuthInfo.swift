@@ -39,3 +39,11 @@ struct UserAuthInfo: Sendable {
     }
     
 }
+
+extension UserAuthInfo {
+    static let previewUID = "U_PREVIEW"
+    static func mock() -> Self {
+        Self(uid: previewUID, email: "mock@ai.com", isAnonymous: false,
+             creationDate: .now, lastSignInDate: .now)
+    }
+}
