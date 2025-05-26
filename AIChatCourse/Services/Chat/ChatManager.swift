@@ -10,15 +10,39 @@ protocol ChatService: Sendable {
     func getChat(userId: String, avatarId: String) async throws -> ChatModel?
     func addChatMessage(chatId: String, message: ChatMessageModel) async throws
     func streamChatMessages(chatId: String) -> AsyncThrowingStream<[ChatMessageModel], Error>
+    func getAllChat(userId: String) async throws -> [ChatModel]
+    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel?
 }
 
 struct MockChatService: ChatService {
+    
+    let chats: [ChatModel]
+    let delay: Double
+    let showError: Bool
+    
+    init(chats: [ChatModel] = ChatModel.mocks, delay: Double = 0, showError: Bool = false) {
+        self.chats = chats
+        self.delay = delay
+        self.showError = showError
+    }
+    
+    private func tryShowError() throws {
+        if showError {
+            throw URLError(.unknown)
+        }
+    }
+    
     func createNewChat(chat: ChatModel) async throws {
+//        try tryShowError()
         
     }
     
     func getChat(userId: String, avatarId: String) async throws -> ChatModel? {
-        ChatModel.mock
+        try? await Task.sleep(for: .seconds(delay))
+        try tryShowError()
+        return chats.first { chat in
+            return chat.userId == userId && chat.avatarId == avatarId
+        }
     }
     
     func addChatMessage(chatId: String, message: ChatMessageModel) async throws {
@@ -29,6 +53,19 @@ struct MockChatService: ChatService {
         AsyncThrowingStream {_ in
             
         }
+    }
+    
+    func getAllChat(userId: String) async throws -> [ChatModel] {
+        try? await Task.sleep(for: .seconds(delay))
+        try tryShowError()
+        return chats
+    }
+    
+    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
+        try? await Task.sleep(for: .seconds(delay))
+        try tryShowError()
+        
+        return ChatMessageModel.mocks.randomElement()
     }
 }
 
@@ -60,6 +97,21 @@ struct FirebaseChatService: ChatService {
         
         // 第二种查询方式
         try await collection.getDocument(id: ChatModel.chatId(userId: userId, avatarId: avatarId))
+    }
+    
+    func getAllChat(userId: String) async throws -> [ChatModel] {
+        try await collection
+            .whereField(ChatModel.CodingKeys.userId.rawValue, isEqualTo: userId)
+            .getAllDocuments()
+    }
+    
+    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
+        let message: [ChatMessageModel] = try await messageCollection(chatId: chatId)
+            .order(by: ChatMessageModel.CodingKeys.dateCreated.rawValue, descending: true)
+            .limit(to: 1)
+            .getAllDocuments()
+        
+        return message.first
     }
     
     func addChatMessage(chatId: String, message: ChatMessageModel) async throws {
@@ -104,5 +156,13 @@ class ChatManager {
     
     func streamChatMessages(chatId: String) -> AsyncThrowingStream<[ChatMessageModel], Error> {
         service.streamChatMessages(chatId: chatId)
+    }
+    
+    func getAllChat(userId: String) async throws -> [ChatModel] {
+        try await service.getAllChat(userId: userId)
+    }
+    
+    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
+        try await service .getLastChatMessage(chatId: chatId)
     }
 }

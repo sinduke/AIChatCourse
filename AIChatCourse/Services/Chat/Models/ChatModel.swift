@@ -8,7 +8,7 @@
 import SwiftUI
 import IdentifiableByString
 
-struct ChatModel: Identifiable, Codable, StringIdentifiable {
+struct ChatModel: Identifiable, Codable, Hashable, StringIdentifiable {
     let id: String
     let userId: String
     let avatarId: String
@@ -62,26 +62,26 @@ extension ChatModel {
         let now = Date()
         return [
             ChatModel(
-                userId: "U001",
-                avatarId: "A001",
+                userId: UserAuthInfo.mock().uid,
+                avatarId: AvatarModel.mocks.randomElement()!.avatarId,
                 dateCreated: now,
                 dateModified: now
             ),
             ChatModel(
-                userId: "U002",
-                avatarId: "A002",
+                userId: UserAuthInfo.mock().uid,
+                avatarId: AvatarModel.mocks.randomElement()!.avatarId,
                 dateCreated: now.addingTimeInterval(minutes: -10),   // 10 分钟前
                 dateModified: now.addingTimeInterval(minutes: -5)    // 5  分钟前
             ),
             ChatModel(
-                userId: "U003",
-                avatarId: "A003",
+                userId: UserAuthInfo.mock().uid,
+                avatarId: AvatarModel.mocks.randomElement()!.avatarId,
                 dateCreated: now.addingTimeInterval(hours: -1),      // 1  小时前
                 dateModified: now.addingTimeInterval(minutes: -30)   // 30 分钟前
             ),
             ChatModel(
-                userId: "U004",
-                avatarId: "A004",
+                userId: UserAuthInfo.mock().uid,
+                avatarId: AvatarModel.mocks.randomElement()!.avatarId,
                 dateCreated: now.addingTimeInterval(hours: -2),      // 2  小时前
                 dateModified: now.addingTimeInterval(hours: -2)      // 同上
             )
