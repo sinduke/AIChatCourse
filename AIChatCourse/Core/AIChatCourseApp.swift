@@ -21,6 +21,7 @@ struct AIChatCourseApp: App {
                 .environment(delegate.dependencies.avatarManager)
                 .environment(delegate.dependencies.authManager)
                 .environment(delegate.dependencies.userManager)
+                .environment(delegate.dependencies.chatManager)
         }
     }
 }
@@ -58,12 +59,14 @@ struct Dependencies {
     let userManager: UserManager
     let aiManager: AIManager
     let avatarManager: AvatarManager
+    let chatManager: ChatManager
     
     init() {
         authManager = AuthManager(service: FirebaseAuthService())
         userManager = UserManager(services: ProductUserServices())
         aiManager = AIManager(service: OpenAIService())
         avatarManager = AvatarManager(service: FirebaseAvatarService(), local: SwiftDataLocalAvatarPersistence())
+        chatManager = ChatManager(service: FirebaseChatService())
     }
     
 }
@@ -78,6 +81,7 @@ extension View {
             .environment(AppState())
             .environment(AvatarManager(service: MockAvatarService()))
             .environment(AuthManager(service: MockAuthService(user: isSignedIn ? .mock() : nil)))
+            .environment(ChatManager(service: MockChatService()))
     }
     /**
      根据这个注释内容。之后的代码可以这样写Preview
