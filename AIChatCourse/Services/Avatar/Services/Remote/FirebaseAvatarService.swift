@@ -10,7 +10,7 @@ import SwiftfulFirestore
 
 struct FirebaseAvatarService: RemoteAvatarService {
     
-    var collection: CollectionReference {
+    private var collection: CollectionReference {
         Firestore.firestore().collection("avatars")
     }
     

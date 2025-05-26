@@ -11,7 +11,7 @@ import SwiftfulFirestore
 
 struct FirebaseUserService: RemoteUserService {
     
-    var collection: CollectionReference {
+    private var collection: CollectionReference {
         Firestore.firestore().collection("users")
     }
     

@@ -24,6 +24,7 @@ struct ChatView: View {
     @State private var scrollPosition: String?
     @State private var showAlert: AnyAppAlert?
     @State private var showProfileModal: Bool = false
+    @State private var isGeneratingResponse: Bool = false
     
     var avatarId: String = AvatarModel.mock.avatarId
     
@@ -37,12 +38,18 @@ struct ChatView: View {
         .toolbarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Image(systemName: "ellipsis")
-                    .padding(8)
-                    .foregroundStyle(.accent)
-                    .anyButton {
-                        onChatSettingPressed()
+                HStack {
+                    if isGeneratingResponse {
+                        ProgressView()
                     }
+                    
+                    Image(systemName: "ellipsis")
+                        .padding(8)
+                        .foregroundStyle(.accent)
+                        .anyButton {
+                            onChatSettingPressed()
+                        }
+                }
             }
         }
         .showCustomAlert(type: .confirmationDialog, alert: $showChatSettings)
@@ -128,6 +135,12 @@ struct ChatView: View {
     }
     
     // MARK: -- Func
+    private func createNewChat(chatId: String) async throws -> ChatModel {
+        let newChat = ChatModel.new(chatId: chatId, avatarId: avatarId)
+        try await chatManager.createNewChat(chat: newChat)
+        return newChat
+    }
+    
     private func loadCurrentUser() {
         currentUser = userManager.currentUser
     }
@@ -148,24 +161,44 @@ struct ChatView: View {
         
         Task {
             do {
+                // 获取用户ID
                 let uid = try authManager.getAuthId()
+                // 验证输入框文字
                 try TextValidationHelper.checkIfTextIsValid(text: content)
+                // 如果是 新的聊天则进行创建
                 if chat == nil {
-                    // 新的聊天则进行创建/ 
-                    let newChat = ChatModel.new(chatId: uid, avatarId: avatarId)
-                    try await chatManager.createNewChat(chat: newChat)
+                    chat = try await createNewChat(chatId: uid)
                 }
                 
+                guard let chat else {
+                    throw ChatViewError.noChat
+                }
+                
+                // 创建用户聊天
                 let newMessage = AIChatModel(role: .user, content: content)
-                let chatId: String = UUID().uuidString
-                let message = ChatMessageModel.newUserSendMessage(chatId: chatId, userId: uid, message: newMessage)
+                let message = ChatMessageModel.newUserSendMessage(chatId: chat.id, userId: uid, message: newMessage)
+                
+                // 上传用户聊天
+                try await chatManager.addChatMessage(chatId: chat.id, message: message)
                 chatMessages.append(message)
+                
+                // 清理textfield并滚动到底部
                 scrollPosition = message.id
                 textFieldText = ""
+                
+                // 创建AI回复内容
+                isGeneratingResponse = true
+                defer {
+                    isGeneratingResponse = false
+                }
                 let aiChats = chatMessages.compactMap({ $0.content })
                 let response = try await aiManager.generateText(chats: aiChats)
                 
-                let newAIMessage = ChatMessageModel.newAIMessage(chatId: chatId, avatarId: avatarId, message: response)
+                // 创建AI回复信息
+                let newAIMessage = ChatMessageModel.newAIMessage(chatId: chat.id, avatarId: avatarId, message: response)
+                
+                // 上传AI聊天
+                try await chatManager.addChatMessage(chatId: chat.id, message: newAIMessage)
                 chatMessages.append(newAIMessage)
             } catch {
                 showAlert = AnyAppAlert(error: error)
@@ -195,12 +228,32 @@ struct ChatView: View {
     private func onAvatarImagePressed() {
         showProfileModal = true
     }
+    
+    // MARK: -- ENUM
+    enum ChatViewError: Error {
+        case noChat
+    }
 }
 
-#Preview {
+#Preview("Default") {
     NavigationStack {
         ChatView()
-            .environment(AvatarManager(service: MockAvatarService()))
+            .previewEnvrionment()
+    }
+}
+
+#Preview("AI 延迟回复") {
+    NavigationStack {
+        ChatView()
+            .environment(AIManager(service: MockAIService(delay: 10)))
+            .previewEnvrionment()
+    }
+}
+
+#Preview("AI 生成失败") {
+    NavigationStack {
+        ChatView()
+            .environment(AIManager(service: MockAIService(delay: 1, showError: true)))
             .previewEnvrionment()
     }
 }

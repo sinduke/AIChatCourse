@@ -90,7 +90,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
         let now = Date()
         return [
             AvatarModel(
-                avatarId: "A001",
+                avatarId: "mock_ava_1",
                 name: "Alice",
                 characterOption: .woman,
                 characterAction: .smiling,
@@ -101,7 +101,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 10
             ),
             AvatarModel(
-                avatarId: "A002",
+                avatarId: "mock_ava_2",
                 name: "Bob",
                 characterOption: .man,
                 characterAction: .walking,
@@ -112,7 +112,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 101// 1 h 前
             ),
             AvatarModel(
-                avatarId: "A003",
+                avatarId: "mock_ava_3",
                 name: "Cathy",
                 characterOption: .alien,
                 characterAction: .studying,
@@ -123,7 +123,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 103// 2 h 前
             ),
             AvatarModel(
-                avatarId: "A004",
+                avatarId: "mock_ava_4",
                 name: "Duke",
                 characterOption: .dog,
                 characterAction: .relaxing,
@@ -134,7 +134,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 11// 3 h 前
             ),
             AvatarModel(
-                avatarId: "A005",
+                avatarId: "mock_ava_5",
                 name: "Eva",
                 characterOption: .woman,
                 characterAction: .shopping,
@@ -145,7 +145,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 9
             ),
             AvatarModel(
-                avatarId: "A006",
+                avatarId: "mock_ava_6",
                 name: "Finn",
                 characterOption: .cat,
                 characterAction: .eating,
@@ -156,7 +156,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 10
             ),
             AvatarModel(
-                avatarId: "A007",
+                avatarId: "mock_ava_7",
                 name: "Grace",
                 characterOption: .woman,
                 characterAction: .working,
@@ -167,7 +167,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 99
             ),
             AvatarModel(
-                avatarId: "A008", 
+                avatarId: "mock_ava_8",
                 name: "Hank",
                 characterOption: .man,
                 characterAction: .drinking,
@@ -178,7 +178,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 5
             ),
             AvatarModel(
-                avatarId: "A009",
+                avatarId: "mock_ava_9",
                 name: "Iris",
                 characterOption: .alien,
                 characterAction: .fighting,
@@ -189,7 +189,7 @@ struct AvatarModel: Hashable, Codable, StringIdentifiable {
                 clickCount: 202
             ),
             AvatarModel(
-                avatarId: "A010",
+                avatarId: "mock_ava_10",
                 name: "Jack",
                 characterOption: .man,
                 characterAction: .crying,

@@ -42,10 +42,11 @@ struct MockAvatarService: RemoteAvatarService {
     }
     
     func getAvatar(id: String) async throws -> AvatarModel {
+        try tryShowError()
         guard let avatar = avatars.first(where: { $0.avatarId == id }) else {
             throw URLError(.noPermissionsToReadFile)
         }
-        try tryShowError()
+        
         return avatar
     }
     
