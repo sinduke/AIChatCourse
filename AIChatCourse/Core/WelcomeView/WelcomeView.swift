@@ -48,7 +48,7 @@ struct WelcomeView: View {
                 .font(.largeTitle)
                 .fontWeight(.semibold)
             
-            Text("YouTube @swiftfulThinking")
+            Text("TikTok @Sinduke")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

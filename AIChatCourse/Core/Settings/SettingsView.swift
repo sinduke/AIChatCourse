@@ -74,7 +74,7 @@ struct SettingsView: View {
         } header: {
             Text("Application")
         } footer: {
-            Text("Create by swiftful thinking. \nLearn more at www.sinduke.com")
+            Text("Create by Sinduke. \nLearn more at www.sinduke.com")
                 .baselineOffset(6)
         }
     }
