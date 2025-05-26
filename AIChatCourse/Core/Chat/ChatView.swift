@@ -13,6 +13,7 @@ struct ChatView: View {
     @Environment(AIManager.self) private var aiManager
     @Environment(ChatManager.self) private var chatManager
     @Environment(UserManager.self) private var userManager
+    @Environment(\.dismiss) private var dismiss
     
     @State private var chatMessages: [ChatMessageModel] = []
     @State private var currentUser: UserModel?
@@ -262,15 +263,52 @@ struct ChatView: View {
                 AnyView(
                     Group(content: {
                         Button("Report User / Chat", role: .destructive) {
-                            
+                            onReportChatPressed()
                         }
                         Button("Delete Chat", role: .destructive) {
-                            
+                            onDeleteChatPressed()
                         }
                     })
                 )
             }
         )
+    }
+    
+    private func onReportChatPressed() {
+        Task {
+            do {
+                let chatId = try getChatId()
+                let uid = try authManager.getAuthId()
+                try await chatManager.reportChat(chatId: chatId, userId: uid)
+                
+                showAlert = AnyAppAlert(
+                    title: "🚨 Reported 🚨",
+                    subtitle: "We will review the chat shortly. you may leave the chat at any time. Thanks for bringing this to our attention!"
+                )
+                
+            } catch {
+                showAlert = AnyAppAlert(
+                    title: "Something went wrong",
+                    subtitle: "Please check your internet connection and try again."
+                )
+            }
+        }
+    }
+    
+    private func onDeleteChatPressed() {
+        Task {
+            do {
+                let chatId = try getChatId()
+                try await chatManager.deleteChat(chatId: chatId)
+                
+                dismiss()
+            } catch {
+                showAlert = AnyAppAlert(
+                    title: "Something went wrong",
+                    subtitle: "Please check your internet connection and try again."
+                )
+            }
+        }
     }
     
     private func onAvatarImagePressed() {
