@@ -32,7 +32,7 @@ struct ConsoleService: LogService {
         print(string)
     }
     
-    func addUserProperties(dict: [String : Any]) {
+    func addUserProperties(dict: [String: Any]) {
         var string = """
             Log User Properties
             """
@@ -47,7 +47,7 @@ struct ConsoleService: LogService {
     }
     
     func deleteUserProfile() {
-        var string = """
+        let string = """
             Delete User Profile
             """
         print(string)
