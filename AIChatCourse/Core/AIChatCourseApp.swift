@@ -66,7 +66,8 @@ enum BuildConfiguration {
     
     func config() {
         switch self {
-        case .mock(let isSignedIn):
+//        case .mock(let isSignedIn):
+        case .mock:
             break
         case .dev:
             let plist = Bundle.main.path(forResource: "GoogleService-Info-Dev", ofType: "plist")!
