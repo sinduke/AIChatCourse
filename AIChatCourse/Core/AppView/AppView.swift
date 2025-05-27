@@ -14,6 +14,7 @@ struct AppView: View {
     
     @Environment(AuthManager.self) private var authManager
     @Environment(UserManager.self) private var userManager
+    @Environment(LogManager.self) private var logManager
     @State var appState: AppState = AppState()
 
     var body: some View {
@@ -27,6 +28,16 @@ struct AppView: View {
             }
         )
         .environment(appState)
+        .onAppear(
+            perform: {
+                logManager.identifyUser(
+                    userId: "sinduke1122",
+                    name: "sinduke",
+                    email: "sinduke@outlook.com"
+                )
+                
+                logManager.addUserProperties(dict: UserModel.mock.eventParameters)
+        })
         .task {
             await checkUserStatus()
         }

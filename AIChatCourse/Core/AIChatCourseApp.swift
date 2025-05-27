@@ -19,6 +19,7 @@ struct AIChatCourseApp: App {
                 .environment(delegate.dependencies.authManager)
                 .environment(delegate.dependencies.userManager)
                 .environment(delegate.dependencies.chatManager)
+                .environment(delegate.dependencies.logManager)
         }
     }
 }
@@ -88,6 +89,7 @@ struct Dependencies {
     let aiManager: AIManager
     let avatarManager: AvatarManager
     let chatManager: ChatManager
+    let logManager: LogManager
     
     init(config: BuildConfiguration) {
         
@@ -98,18 +100,25 @@ struct Dependencies {
             aiManager = AIManager(service: MockAIService())
             avatarManager = AvatarManager(service: MockAvatarService(), local: MockLocalAvatarPersistence())
             chatManager = ChatManager(service: MockChatService())
+            logManager = LogManager(services: [
+                ConsoleService()
+            ])
         case .dev:
             authManager = AuthManager(service: FirebaseAuthService())
             userManager = UserManager(services: ProductUserServices())
             aiManager = AIManager(service: OpenAIService())
             avatarManager = AvatarManager(service: FirebaseAvatarService(), local: SwiftDataLocalAvatarPersistence())
             chatManager = ChatManager(service: FirebaseChatService())
+            logManager = LogManager(services: [
+                ConsoleService()
+            ])
         case .prod:
             authManager = AuthManager(service: FirebaseAuthService())
             userManager = UserManager(services: ProductUserServices())
             aiManager = AIManager(service: OpenAIService())
             avatarManager = AvatarManager(service: FirebaseAvatarService(), local: SwiftDataLocalAvatarPersistence())
             chatManager = ChatManager(service: FirebaseChatService())
+            logManager = LogManager(services: [])
         }
     }
 }
@@ -125,6 +134,7 @@ extension View {
             .environment(AvatarManager(service: MockAvatarService()))
             .environment(AuthManager(service: MockAuthService(user: isSignedIn ? .mock() : nil)))
             .environment(ChatManager(service: MockChatService()))
+            .environment(LogManager(services: [ ]))
     }
     /**
      根据这个注释内容。之后的代码可以这样写Preview
