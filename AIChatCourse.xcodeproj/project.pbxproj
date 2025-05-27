@@ -10,6 +10,7 @@
 		F229A3182DDDFC3500C82915 /* SwiftfulFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = F229A3172DDDFC3500C82915 /* SwiftfulFirestore */; };
 		F25ED4FB2DDC72240072496E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F25ED4FA2DDC72240072496E /* FirebaseAuth */; };
 		F25ED5092DDC8B350072496E /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = F25ED5082DDC8B350072496E /* SignInAppleAsync */; };
+		F299CC382DE61769009CD28E /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = F299CC372DE61769009CD28E /* FirebaseAnalytics */; };
 		F2A492062DD63BBE0061D9DD /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F2A492052DD63BBE0061D9DD /* SDWebImageSwiftUI */; };
 		F2A492312DDACCC70061D9DD /* SwiftfulUtilities in Frameworks */ = {isa = PBXBuildFile; productRef = F2A492302DDACCC70061D9DD /* SwiftfulUtilities */; };
 		F2B169072DE05C4D0054E250 /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = F2B169062DE05C4D0054E250 /* OpenAI */; };
@@ -40,9 +41,22 @@
 		F20869142DD4A53400D6BF79 /* AIChatCourseUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AIChatCourseUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		F299CC3A2DE61F50009CD28E /* Exceptions for "AIChatCourse" folder in "AIChatCourse" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = F20868FB2DD4A53200D6BF79 /* AIChatCourse */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		F20868FE2DD4A53200D6BF79 /* AIChatCourse */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				F299CC3A2DE61F50009CD28E /* Exceptions for "AIChatCourse" folder in "AIChatCourse" target */,
+			);
 			path = AIChatCourse;
 			sourceTree = "<group>";
 		};
@@ -71,6 +85,7 @@
 				F2B1691A2DE159270054E250 /* FirebaseStorage in Frameworks */,
 				F2DF22B42DDCFD8D00FBF909 /* FirebaseFirestore in Frameworks */,
 				F2A492312DDACCC70061D9DD /* SwiftfulUtilities in Frameworks */,
+				F299CC382DE61769009CD28E /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,6 +163,7 @@
 				F229A3172DDDFC3500C82915 /* SwiftfulFirestore */,
 				F2B169062DE05C4D0054E250 /* OpenAI */,
 				F2B169192DE159270054E250 /* FirebaseStorage */,
+				F299CC372DE61769009CD28E /* FirebaseAnalytics */,
 			);
 			productName = AIChatCourse;
 			productReference = F20868FC2DD4A53200D6BF79 /* AIChatCourse.app */;
@@ -465,6 +481,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AIChatCourse/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Chat - Dev";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -509,6 +526,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AIChatCourse/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Chat - Dev";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -706,6 +724,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = AIChatCourse/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Chat - Dev";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
@@ -893,6 +912,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F25ED5072DDC8B350072496E /* XCRemoteSwiftPackageReference "SignInAppleAsync" */;
 			productName = SignInAppleAsync;
+		};
+		F299CC372DE61769009CD28E /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F25ED4F92DDC72240072496E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
 		};
 		F2A492052DD63BBE0061D9DD /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;

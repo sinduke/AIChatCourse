@@ -82,10 +82,10 @@ struct DevSettingsView: View {
         HStack {
             Text(item.key)
             Spacer(minLength: 4)
-            if let value = item.value as? Date {
-                Text(value.formatted())
+            if let value = String.convertToString(item.value) {
+                Text(value)
             } else {
-                Text(String(describing: item.value))
+                Text("Unknown")
             }
         }
         .font(.caption)

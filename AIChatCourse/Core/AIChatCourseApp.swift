@@ -102,6 +102,7 @@ struct Dependencies {
             chatManager = ChatManager(service: MockChatService())
             logManager = LogManager(services: [
                 ConsoleService(printParameters: false)
+                // mock中不添加分析
             ])
         case .dev:
             authManager = AuthManager(service: FirebaseAuthService())
@@ -111,7 +112,7 @@ struct Dependencies {
             chatManager = ChatManager(service: FirebaseChatService())
             logManager = LogManager(services: [
 //                ConsoleService()
-                ConsoleService(printParameters: false)
+                ConsoleService(), FirebaseAnalyticsService()
             ])
         case .prod:
             authManager = AuthManager(service: FirebaseAuthService())
@@ -119,7 +120,10 @@ struct Dependencies {
             aiManager = AIManager(service: OpenAIService())
             avatarManager = AvatarManager(service: FirebaseAvatarService(), local: SwiftDataLocalAvatarPersistence())
             chatManager = ChatManager(service: FirebaseChatService())
-            logManager = LogManager(services: [])
+            logManager = LogManager(services: [
+                // prod中不添加打印(oslog)
+                FirebaseAnalyticsService()
+            ])
         }
     }
 }
