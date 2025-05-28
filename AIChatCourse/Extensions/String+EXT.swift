@@ -42,3 +42,17 @@ extension String {
     }
     
 }
+
+extension String {
+   var stableHashValue: Int {
+        let unicodeScalars = self.unicodeScalars.map { $0.value }
+        return unicodeScalars.reduce(5381) { ($0 << 5) &+ $0 &+ Int($1) }
+    }
+    
+    /// djb2 – 与位宽无关的稳定哈希
+    var djb2Hash: UInt64 {
+        unicodeScalars.reduce(UInt64(5381)) {
+            ($0 << 5) &+ $0 &+ UInt64($1.value)
+        }
+    }
+}

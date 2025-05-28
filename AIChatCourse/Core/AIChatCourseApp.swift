@@ -112,7 +112,10 @@ struct Dependencies {
             chatManager = ChatManager(service: FirebaseChatService())
             logManager = LogManager(services: [
 //                ConsoleService()
-                ConsoleService(), FirebaseAnalyticsService(), MixPanelService(token: Keys.minPanelToken, loggingEnabled: false)
+                ConsoleService(),
+                FirebaseAnalyticsService(),
+                MixPanelService(token: Keys.minPanelToken, loggingEnabled: false),
+                FirebaseCrashlyticsService()
             ])
         case .prod:
             authManager = AuthManager(service: FirebaseAuthService())
@@ -123,7 +126,9 @@ struct Dependencies {
             logManager = LogManager(services: [
                 // prod中不添加打印(oslog)
                 // mixPanel记录的时候 Prod模式下不要打印
-                FirebaseAnalyticsService(), MixPanelService(token: Keys.minPanelToken)
+                FirebaseAnalyticsService(),
+                MixPanelService(token: Keys.minPanelToken),
+                FirebaseCrashlyticsService()
             ])
         }
     }
