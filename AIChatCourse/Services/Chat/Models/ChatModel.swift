@@ -15,14 +15,6 @@ struct ChatModel: Identifiable, Codable, Hashable, StringIdentifiable {
     let dateCreated: Date
     let dateModified: Date
     
-    enum CodingKeys: String, CodingKey {
-        case id
-        case userId = "user_id"
-        case avatarId = "avatar_id"
-        case dateCreated = "date_created"
-        case dateModified = "date_modified"
-    }
-    
     init(
         id: String = UUID().uuidString,
         userId: String,
@@ -49,6 +41,27 @@ struct ChatModel: Identifiable, Codable, Hashable, StringIdentifiable {
             dateCreated: .now,
             dateModified: .now
         )
+    }
+    
+    // MARK: -- ENUM
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userId = "user_id"
+        case avatarId = "avatar_id"
+        case dateCreated = "date_created"
+        case dateModified = "date_modified"
+    }
+    
+    var eventParameters: [String: Any] {
+        let dict: [String: Any?] = [
+            "chat_\(CodingKeys.id.rawValue)": id,
+            "chat_\(CodingKeys.userId.rawValue)": userId,
+            "chat_\(CodingKeys.avatarId.rawValue)": avatarId,
+            "chat_\(CodingKeys.dateCreated.rawValue)": dateCreated,
+            "chat_\(CodingKeys.dateModified.rawValue)": dateModified
+        ]
+        // 返回把Nil丢弃之后的值
+        return dict.compactMapValues({ $0 })
     }
 }
 

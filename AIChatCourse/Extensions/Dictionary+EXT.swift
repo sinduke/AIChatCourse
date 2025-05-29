@@ -34,3 +34,11 @@ extension Dictionary where Key == String {
         }
     }
 }
+
+extension Dictionary where Key == String {
+    mutating func merge(_ other: Dictionary?, confilctTakeExisting: Bool = true) {
+        if let other {
+            self.merge(other, uniquingKeysWith: { existing, new in return confilctTakeExisting ? existing : new })
+        }
+    }
+}
