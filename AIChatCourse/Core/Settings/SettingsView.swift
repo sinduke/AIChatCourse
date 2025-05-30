@@ -237,6 +237,7 @@ struct SettingsView: View {
                 async let deleteChats: () = chatManager.deleteAllChatForDeleteUser(userId: uid)
                 
                 let (_, _, _, _) = await (try deleteAuth, try deleteUser, try deleteAvatars, try deleteChats)
+                logManager.deleteUserProfile()
                 logManager.trackEvent(event: Event.onDeleteAccountSuccess)
 
                 await onDismissScreen()
