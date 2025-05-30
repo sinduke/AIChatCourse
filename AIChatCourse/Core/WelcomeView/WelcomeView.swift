@@ -11,6 +11,7 @@ struct WelcomeView: View {
     @State var imageName: String = Constants.randomImage
     @State private var showSignInView: Bool = false
     @Environment(AppState.self) private var root
+    @Environment(LogManager.self) private var logManager
     
     var body: some View {
         NavigationStack {
@@ -26,6 +27,7 @@ struct WelcomeView: View {
                 
                 policySection
             }
+            .screenAppearAnalytics(name: "WelcomeView")
             .sheet(
                 isPresented: $showSignInView,
                 content: {
@@ -56,6 +58,7 @@ struct WelcomeView: View {
     
     private var ctaButtonSection: some View {
         VStack {
+            // TO1DO: 这里理论上不能进行点击操作了 以后改成MVVM架构的时候修改(强迫症犯了 去掉警告⚠️)
             NavigationLink {
                 OnboardingIntroView()
             } label: {
@@ -89,9 +92,11 @@ struct WelcomeView: View {
     // MARK: -- Funcation
     private func onSignInPressed() {
         showSignInView = true
+        logManager.trackEvent(event: Event.signInPressed)
     }
     
     private func handingDidSignIn(isNewUser: Bool) {
+        logManager.trackEvent(event: Event.didSignIn(isNewUser: isNewUser))
         if isNewUser {
             // Do Nothing
         } else {
@@ -99,6 +104,34 @@ struct WelcomeView: View {
         }
     }
     
+    // MARK: -- Enum
+    enum Event: LoggableEvent {
+        case didSignIn(isNewUser: Bool)
+        case signInPressed
+        
+        var eventName: String {
+            switch self {
+            case .didSignIn: return "WelcomeView_DidSignIn"
+            case .signInPressed: return "WelcomeView_SignIn_Pressed"
+            }
+        }
+        
+        var parameters: [String: Any]? {
+            switch self {
+            case .didSignIn(isNewUser: let isNewUser): return ["is_new_user": isNewUser]
+            default:
+                return nil
+            }
+        }
+        
+        var type: LogType {
+            switch self {
+            default:
+                return .analytic
+            }
+        }
+        
+    }
 }
 
 #Preview {

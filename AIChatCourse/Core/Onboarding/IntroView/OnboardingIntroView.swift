@@ -37,6 +37,7 @@ struct OnboardingIntroView: View {
             }
 
         }
+        .screenAppearAnalytics(name: "OnboardingIntroView")
         .font(.title3)
         .padding(24)
         .toolbar(.hidden, for: .navigationBar)

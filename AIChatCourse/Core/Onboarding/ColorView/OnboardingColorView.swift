@@ -32,6 +32,7 @@ struct OnboardingColorView: View {
                 .background(.background)
             }
         )
+        .screenAppearAnalytics(name: "OnboardingColorView")
         .animation(.easeInOut(duration: 0.3), value: selectedColor != nil)
         .toolbar(.hidden, for: .navigationBar)
     }

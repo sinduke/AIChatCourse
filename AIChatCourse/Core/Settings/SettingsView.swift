@@ -15,6 +15,7 @@ struct SettingsView: View {
     @Environment(AvatarManager.self) private var avatarManager
     @Environment(AppState.self) private var appState
     @Environment(ChatManager.self) private var chatManager
+    @Environment(LogManager.self) private var logManager
     @State private var isPremium: Bool = false
     @State private var isAnonymousUser: Bool = false
     @State private var showCreateAccountView: Bool = false
@@ -35,6 +36,7 @@ struct SettingsView: View {
                     .presentationDetents([.medium])
             })
             .navigationTitle("Settings")
+            .screenAppearAnalytics(name: "SettingsView")
             .onAppear {
                 setAnonymousAccountStatus()
             }
@@ -42,6 +44,48 @@ struct SettingsView: View {
         }
     }
     
+    // MARK: -- Enum
+    enum Event: LoggableEvent {
+
+        case onSignOutStart
+        case onSignOutSuccess
+        case onSignOutFail(error: Error)
+
+        case onDeleteAccountStart
+        case onDeleteAccountSuccess
+        case onDeleteAccountFail(error: Error)
+
+        case onCreateAccountPressed
+
+        var eventName: String {
+            switch self {
+            case .onSignOutStart: return "SettingsView_SignOut_Start"
+            case .onSignOutSuccess: return "SettingsView_SignOut_Success"
+            case .onSignOutFail: return "SettingsView_SignOut_Fail"
+
+            case .onDeleteAccountStart: return "SettingsView_DeleteAccount_Start"
+            case .onDeleteAccountSuccess: return "SettingsView_DeleteAccount_Success"
+            case .onDeleteAccountFail: return "SettingsView_DeleteAccount_Fail"
+
+            case .onCreateAccountPressed: return "SettingsView_CreateAccount_Pressed"
+            }
+        }
+
+        var parameters: [String: Any]? {
+            switch self {
+            case .onSignOutFail(let error), .onDeleteAccountFail(let error): return error.eventParameters
+            default: return nil
+            }
+        }
+
+        var type: LogType {
+            switch self {
+            case .onSignOutFail, .onDeleteAccountFail: return .severe
+            default: return .analytic
+            }
+        }
+        
+    }
     // MARK: -- View
     private var applicationSection: some View {
         Section {
@@ -142,12 +186,15 @@ struct SettingsView: View {
     }
     
     private func onSignOutPressed() {
+        logManager.trackEvent(event: Event.onSignOutStart)
         Task {
             do {
                 try authManager.signOut()
                 userManager.signOut()
                 await onDismissScreen()
+                logManager.trackEvent(event: Event.onSignOutSuccess)
             } catch {
+                logManager.trackEvent(event: Event.onSignOutFail(error: error))
                 showAlert = AnyAppAlert(error: error)
             }
         }
@@ -160,10 +207,12 @@ struct SettingsView: View {
     }
     
     private func onCreateAccountPressed() {
+        logManager.trackEvent(event: Event.onCreateAccountPressed)
         showCreateAccountView = true
     }
     
     private func onDeleteAccountPressed() {
+        logManager.trackEvent(event: Event.onDeleteAccountStart)
         showAlert = AnyAppAlert(
             title: "Delete Account?",
             subtitle: "This action is permanent and cannot be undone. Your data will be delete from our server forever",
@@ -188,9 +237,12 @@ struct SettingsView: View {
                 async let deleteChats: () = chatManager.deleteAllChatForDeleteUser(userId: uid)
                 
                 let (_, _, _, _) = await (try deleteAuth, try deleteUser, try deleteAvatars, try deleteChats)
-                
+                logManager.trackEvent(event: Event.onDeleteAccountSuccess)
+
                 await onDismissScreen()
+                
             } catch {
+                logManager.trackEvent(event: Event.onDeleteAccountFail(error: error))
                 showAlert = AnyAppAlert(error: error)
             }
         }
