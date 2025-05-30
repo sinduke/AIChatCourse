@@ -102,22 +102,22 @@ struct OpenAIService: AIService {
 
 struct AIChatModel: Codable {
     let role: AIChatRole
-    let message: String
+    let content: String
     
     init(role: AIChatRole, content: String) {
         self.role = role
-        self.message = content
+        self.content = content
     }
     
     enum CodingKeys: String, CodingKey {
         case role
-        case message
+        case content
     }
     
     var eventParameters: [String: Any] {
         let dict: [String: Any?] = [
             "aichat_\(CodingKeys.role.rawValue)": role.rawValue,
-            "aichat_\(CodingKeys.message.rawValue)": message
+            "aichat_\(CodingKeys.content.rawValue)": content
         ]
         // 返回把Nil丢弃之后的值
         return dict.compactMapValues({ $0 })
@@ -130,19 +130,19 @@ struct AIChatModel: Codable {
         }
         
         self.role = AIChatRole(role: roleEnum)
-        self.message = content
+        self.content = content
     }
     
     fileprivate func toOpenAIModel() -> ChatParam? {
         switch role {
         case .system:
-            return ChatParam.system(ChatParam.SystemMessageParam(content: message))
+            return ChatParam.system(ChatParam.SystemMessageParam(content: content))
         case .developer:
-            return ChatParam.developer(ChatParam.DeveloperMessageParam(content: message))
+            return ChatParam.developer(ChatParam.DeveloperMessageParam(content: content))
         case .user:
-            return ChatParam.user(ChatParam.UserMessageParam(content: .string(message)))
+            return ChatParam.user(ChatParam.UserMessageParam(content: .string(content)))
         case .assistant:
-            return ChatParam.assistant(ChatParam.AssistantMessageParam(content: message))
+            return ChatParam.assistant(ChatParam.AssistantMessageParam(content: content))
         case .tool:
             return nil
         }

@@ -25,6 +25,7 @@ struct DevSettingsView: View {
                     backButtonView
                 }
             })
+            .screenAppearAnalytics(name: "DevSettings")
             .navigationTitle("DevSettings 🧑‍💻")
         }
     }
