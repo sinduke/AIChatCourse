@@ -67,6 +67,10 @@
             argument = "-FIRDebugDisabled"
             isEnabled = "YES">
          </CommandLineArgument>
+         <CommandLineArgument
+            argument = "OS_ACTIVITY_MODE = disable"
+            isEnabled = "NO">
+         </CommandLineArgument>
       </CommandLineArguments>
    </LaunchAction>
    <ProfileAction

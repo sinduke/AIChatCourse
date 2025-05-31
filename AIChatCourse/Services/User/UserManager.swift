@@ -113,7 +113,6 @@ class UserManager {
         case deleteAccountStart
         case deleteAccountSuccess
 
-        
         var eventName: String {
             switch self {
             case .logInStart: return "UserManager_LogIn_Start"

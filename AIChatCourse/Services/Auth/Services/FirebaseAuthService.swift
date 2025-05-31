@@ -29,6 +29,10 @@ struct FirebaseAuthService: AuthService {
         }
     }
     
+    func removeAuthenticatedUserListener(listener: any NSObjectProtocol) {
+        Auth.auth().removeStateDidChangeListener(listener)
+    }
+    
     func getAuthenticatedUser() -> UserAuthInfo? {
         guard let user = Auth.auth().currentUser else {
             return nil
@@ -84,15 +88,53 @@ struct FirebaseAuthService: AuthService {
             throw AuthError.userNotFound
         }
         
-        try await user.delete()
+        do {
+            try await user.delete()
+        } catch let error as NSError {
+            let authError = AuthErrorCode(rawValue: error.code)
+            switch authError {
+            case .requiresRecentLogin:
+                // 如果需要重新认证，则重新认证
+                try await reAuthenticateUser(error: error)
+                
+                // 重新认证成功后，删除账户
+                try await user.delete()
+            default:
+                throw error
+            }
+        }
     }
-    
+
+    private func reAuthenticateUser(error: Error) async throws {
+        guard let user = Auth.auth().currentUser, let providerID = user.providerData.first?.providerID else {
+            throw AuthError.userNotFound
+        }
+
+        switch providerID {
+        case "apple.com":
+            let result = try await signInWithApple()
+            guard user.uid == result.user.uid else {
+                throw AuthError.reAuthenticateChanged
+            }
+        default:
+            throw error
+        }
+        
+        // for item in user.providerData {
+        //     dLog(item.providerID)
+        // }
+    }
+
+    // MARK: -- Enum
     enum AuthError: LocalizedError {
         case userNotFound
+        case reAuthenticateChanged
         var errorDescription: String? {
             switch self {
             case .userNotFound:
                 return "Current Authenticated User Not Found"
+            case .reAuthenticateChanged:
+                return "Re-Authenticate Changed, Please Check Your Account"
             }
         }
     }

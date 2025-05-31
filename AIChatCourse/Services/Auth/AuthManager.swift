@@ -26,6 +26,11 @@ class AuthManager {
     // MARK: -- Funcation
     private func addAuthListener() {
         logManager?.trackEvent(event: Event.authListenerStart)
+        
+        if let listener {
+            service.removeAuthenticatedUserListener(listener: listener)
+        }
+        
         Task {
             for await value in service.addAuthenticatedUserListener(onListenerAttached: { listenerse in
                 self.listener = listenerse
@@ -53,7 +58,12 @@ class AuthManager {
         try await service.signInAnonymously()
     }
     func signInWithApple() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
-        try await service.signInWithApple()
+        // 使用苹果账号登出的时候 要切换一个新的listener
+        defer {
+            addAuthListener()
+        }
+        
+        return try await service.signInWithApple()
     }
     func signOut() throws {
         logManager?.trackEvent(event: Event.signOutStart)

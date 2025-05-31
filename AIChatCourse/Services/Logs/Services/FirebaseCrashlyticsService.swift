@@ -24,7 +24,7 @@ struct FirebaseCrashlyticsService: LogService {
         guard isHighPriority else { return }
         
         for (key, value) in dict {
-            Crashlytics.crashlytics().setValue(value, forKey: key)
+            Crashlytics.crashlytics().setCustomValue(value, forKey: key)
         }
     }
     

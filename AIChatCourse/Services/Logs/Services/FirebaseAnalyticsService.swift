@@ -34,7 +34,7 @@ struct FirebaseAnalyticsService: LogService {
         for (key, value) in dict {
             if let string = String.convertToString(value) {
                 
-                let key = key.clean(maxCharacters: 40)
+                let key = key.clean(maxCharacters: 24)
                 let string = string.clean(maxCharacters: 100)
                 Analytics.setUserProperty(string, forName: key)
             }
@@ -68,29 +68,6 @@ struct FirebaseAnalyticsService: LogService {
             let newKey = key.clean(maxCharacters: 40)
             parameters[newKey] = value
         }
-//        var cleaned: [String: Any] = [:]
-//
-//        for (key, value) in parameters where key.count > 40 {
-//            let newKey = key.clean(maxCharacters: 40)
-//            cleaned[newKey] = value
-//        }
-//
-//        // 2️⃣ 把原来需要保留的 + 新 key 一起合并
-//        parameters.merge(cleaned) { (_, new) in new }
-//
-//        // 3️⃣ (可选) 删除旧的超长 key
-//        for key in cleaned.keys {
-//            parameters.removeValue(forKey: key)
-//        }
-//        
-//        // 修复value长度错误问题
-//        for (key, value) in parameters {
-//            if let string = value as? String {
-//                if string.count > 100 {
-//                    parameters[key] = string.clean(maxCharacters: 100)
-//                }
-//            }
-//        }
         
         parameters.first(upTo: 25)
         let name = event.eventName.clean(maxCharacters: 40)

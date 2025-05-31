@@ -63,8 +63,8 @@ struct OpenAIService: AIService {
                 throw OpenAIError.invalidResponse
             }
 
-            dLog("✅ Return Message:")
-            dLog(chat.content ?? "❓未知OpenAI数据")
+//            dLog("✅ Return Message:")
+//            dLog(chat.content ?? "❓未知OpenAI数据")
             
             return model
 
