@@ -19,6 +19,7 @@ struct SettingsView: View {
     @State private var isPremium: Bool = false
     @State private var isAnonymousUser: Bool = false
     @State private var showCreateAccountView: Bool = false
+    @State private var showRatingsModal: Bool = false
     
     @State private var showAlert: AnyAppAlert?
     
@@ -41,6 +42,9 @@ struct SettingsView: View {
                 setAnonymousAccountStatus()
             }
             .showCustomAlert(alert: $showAlert)
+            .showModal(showModal: $showRatingsModal, content: {
+                ratingsModal
+            })
         }
     }
     
@@ -56,6 +60,10 @@ struct SettingsView: View {
         case onDeleteAccountFail(error: Error)
 
         case onCreateAccountPressed
+        case onContactUsPressed
+        case onRateUsPressed
+        case onEnjoyAppYesPressed
+        case onEnjoyAppNoPressed
 
         var eventName: String {
             switch self {
@@ -68,6 +76,10 @@ struct SettingsView: View {
             case .onDeleteAccountFail: return "SettingsView_DeleteAccount_Fail"
 
             case .onCreateAccountPressed: return "SettingsView_CreateAccount_Pressed"
+            case .onContactUsPressed: return "SettingsView_ContactUs_Pressed"
+            case .onRateUsPressed: return "SettingsView_RateUs_Pressed"
+            case .onEnjoyAppYesPressed: return "SettingsView_EnjoyAppYes_Pressed"
+            case .onEnjoyAppNoPressed: return "SettingsView_EnjoyAppNo_Pressed"
             }
         }
 
@@ -87,8 +99,31 @@ struct SettingsView: View {
         
     }
     // MARK: -- View
+    private var ratingsModal: some View {
+        CustomModalView(
+            title: "Are you enjoying AIChat?",
+            subtitle: "We'd love to hear your thoughts and feedback.",
+            primaryButtonTitle: "Yes",
+            secondaryButtonTitle: "No",
+            primaryButtonAction: {
+                onEnjoyAppYesPressed()
+            },
+            secondaryButtonAction: {
+                onEnjoyAppNoPressed()
+            }
+        )
+    }
+
     private var applicationSection: some View {
         Section {
+            Text("Rate us on App Store")
+                .foregroundStyle(.blue)
+                .rowFormatting()
+                .anyButton(.highlight, action: {
+                    onRateUsPressed()
+                })
+                .removeListRowFormatting()
+
             HStack(spacing: 8) {
                 Text("version".capitalized)
                 Spacer(minLength: 0)
@@ -111,7 +146,7 @@ struct SettingsView: View {
                 .foregroundStyle(.blue)
             .rowFormatting()
             .anyButton(.highlight, action: {
-                
+                onContactUsPressed()
             })
             .removeListRowFormatting()
 
@@ -177,6 +212,33 @@ struct SettingsView: View {
     }
     
     // MARK: -- Funcation
+    private func onEnjoyAppYesPressed() {
+        logManager.trackEvent(event: Event.onEnjoyAppYesPressed)
+        showRatingsModal = false
+        ASRHelper.requestRatingsReview()
+    }
+
+    private func onEnjoyAppNoPressed() {
+        logManager.trackEvent(event: Event.onEnjoyAppNoPressed)
+        showRatingsModal = false
+    }
+
+    private func onRateUsPressed() {
+        logManager.trackEvent(event: Event.onRateUsPressed)
+        showRatingsModal = true
+    }
+    
+    private func onContactUsPressed() {
+        logManager.trackEvent(event: Event.onContactUsPressed)
+        let email = "sinduke@outlook.com"
+        let subject = "Contact Us"
+        let body = "Please describe your issue or feedback here."
+        let url = URL(string: "mailto:\(email)?subject=\(subject)&body=\(body)")
+        if let url = url, UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url)
+        }
+    }
+
     private func onReportChatPressed() {
         
     }

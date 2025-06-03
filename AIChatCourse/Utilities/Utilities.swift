@@ -9,3 +9,4 @@ import SwiftfulUtilities
 
 typealias Utilities = SwiftfulUtilities.Utilities
 typealias ATTHelper = AppTrackingTransparencyHelper
+typealias ASRHelper = AppStoreRatingsHelper
