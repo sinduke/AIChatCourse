@@ -59,6 +59,7 @@ struct Dependencies {
     let avatarManager: AvatarManager
     let chatManager: ChatManager
     let logManager: LogManager
+    let pushManager: PushManager
     
     init(config: BuildConfiguration) {
         
@@ -100,5 +101,6 @@ struct Dependencies {
             avatarManager = AvatarManager(service: FirebaseAvatarService(), local: SwiftDataLocalAvatarPersistence())
             chatManager = ChatManager(service: FirebaseChatService())
         }
+        pushManager = PushManager(logManager: logManager)
     }
 }

@@ -10,3 +10,6 @@ import SwiftfulUtilities
 typealias Utilities = SwiftfulUtilities.Utilities
 typealias ATTHelper = AppTrackingTransparencyHelper
 typealias ASRHelper = AppStoreRatingsHelper
+typealias LNotifications = LocalNotifications
+typealias AnyNContent = AnyNotificationContent
+typealias NTriggerOption = NotificationTriggerOption

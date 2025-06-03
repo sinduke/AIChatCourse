@@ -19,6 +19,7 @@ struct AIChatCourseApp: App {
                 .environment(delegate.dependencies.userManager)
                 .environment(delegate.dependencies.chatManager)
                 .environment(delegate.dependencies.logManager)
+                .environment(delegate.dependencies.pushManager)
         }
     }
 }
@@ -50,6 +51,7 @@ extension View {
             .environment(AuthManager(service: MockAuthService(user: isSignedIn ? .mock() : nil)))
             .environment(ChatManager(service: MockChatService()))
             .environment(LogManager(services: [ ]))
+            .environment(PushManager())
     }
     /**
      根据这个注释内容。之后的代码可以这样写Preview

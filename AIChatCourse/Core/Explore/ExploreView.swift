@@ -11,6 +11,7 @@ struct ExploreView: View {
     
     @Environment(AvatarManager.self) private var avatarManager
     @Environment(LogManager.self) private var logManager
+    @Environment(PushManager.self) private var pushManager
     
     @State private var featuredAvatars: [AvatarModel] = []
     @State private var categories: [CharacterOption] = CharacterOption.allCases
@@ -21,6 +22,8 @@ struct ExploreView: View {
     
     @State private var path: [NavigationPathOption] = []
     @State private var showDevSetting: Bool = false
+    @State private var showNotificationsButton: Bool = false
+    @State private var showNotificationsModal: Bool = false
     
     private var showDevSettingsButton: Bool {
         #if DEV || MOCK
@@ -61,10 +64,18 @@ struct ExploreView: View {
             .sheet(isPresented: $showDevSetting, content: {
                 DevSettingsView()
             })
+            .showModal(showModal: $showNotificationsModal, content: {
+                  notificationsModal
+            })
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     if showDevSettingsButton {
                         devSettingButton
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    if showNotificationsButton {
+                        notificationsButton
                     }
                 }
             }
@@ -75,7 +86,65 @@ struct ExploreView: View {
             .task {
                 await loadPopularAvatar()
             }
+            .task {
+                await checkNotificationsPermission()
+            }
+            .onFirstAppear {
+                schedulePushNotifications()
+            }
         }
+    }
+
+    private func schedulePushNotifications() {
+        pushManager.schedulePushNotificationsForNextWeek()
+    }
+
+    private func handleNotificationsPermission() async {
+        showNotificationsModal = await pushManager.canRequestAuthorization()
+    }
+
+    private func checkNotificationsPermission() async {
+        showNotificationsButton = await pushManager.canRequestAuthorization()
+    }
+
+    private var notificationsModal: some View {
+        CustomModalView(
+            title: "Notifications",
+            subtitle: "Enable notifications to get the latest updates and news.",
+            primaryButtonTitle: "Enable",
+            secondaryButtonTitle: "Cancel",
+            primaryButtonAction: onEnableNotificationsModalButtonPressed,
+            secondaryButtonAction: onCancelNotificationsModalButtonPressed
+        )
+    }
+
+    private func onEnableNotificationsModalButtonPressed() {
+        showNotificationsModal = false
+        Task {
+            let isAuthorized = try await pushManager.requestAuthorization()
+            logManager.trackEvent(event: Event.pushNotificationsEnable(isAuthorized: isAuthorized))
+            await handleNotificationsPermission()
+        }
+    }
+
+    private func onCancelNotificationsModalButtonPressed() {
+        showNotificationsModal = false
+        logManager.trackEvent(event: Event.pushNotificationsCancel)
+    }
+
+    private var notificationsButton: some View {
+        Image(systemName: "bell")
+            .font(.headline)
+            .padding(4)
+            .foregroundStyle(.accent)
+            .anyButton(.plain) {
+                onNotificationsPressed()
+            }
+    }
+
+    private func onNotificationsPressed() {
+        showNotificationsModal = true
+        logManager.trackEvent(event: Event.pushNotificationsStart)
     }
     
     private var devSettingButton: some View {
@@ -247,6 +316,9 @@ struct ExploreView: View {
         case loadPopularAvatarFail(error: Error)
         case avatarPressed(avatar: AvatarModel)
         case categoryPressed(category: CharacterOption)
+        case pushNotificationsStart
+        case pushNotificationsEnable(isAuthorized: Bool)
+        case pushNotificationsCancel
         
         var eventName: String {
             switch self {
@@ -260,6 +332,9 @@ struct ExploreView: View {
             case .loadPopularAvatarFail: return "ExploreView_LoadPopularAvatar_Fail"
             case .avatarPressed: return "ExploreView_Avatar_Pressed"
             case .categoryPressed: return "ExploreView_Category_Pressed"
+            case .pushNotificationsStart: return "ExploreView_PushNotifications_Start"
+            case .pushNotificationsEnable: return "ExploreView_PushNotifications_Enable"
+            case .pushNotificationsCancel: return "ExploreView_PushNotifications_Cancel"
             }
         }
         
@@ -273,6 +348,8 @@ struct ExploreView: View {
                 return avatar.eventParameters
             case .categoryPressed(let category):
                 return ["category": category.rawValue]
+            case .pushNotificationsEnable(let isAuthorized):
+                return ["is_authorized": isAuthorized]
             default:
                 return nil
             }
@@ -294,19 +371,23 @@ struct ExploreView: View {
 #Preview("Has Data") {
     ExploreView()
         .environment(AvatarManager(service: MockAvatarService(delay: 0)))
+        .previewEnvrionment()
 }
 
 #Preview("No Data", body: {
     ExploreView()
         .environment(AvatarManager(service: MockAvatarService(avatars: [], delay: 2.0)))
+        .previewEnvrionment()
 })
 
 #Preview("Slow Loading", body: {
     ExploreView()
         .environment(AvatarManager(service: MockAvatarService(avatars: [], delay: 10)))
+        .previewEnvrionment()
 })
 
 #Preview("RealData", body: {
     ExploreView()
         .environment(AvatarManager(service: FirebaseAvatarService()))
+        .previewEnvrionment()
 })
