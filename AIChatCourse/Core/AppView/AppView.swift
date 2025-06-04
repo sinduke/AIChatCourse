@@ -18,30 +18,47 @@ struct AppView: View {
     @State var appState: AppState = AppState()
 
     var body: some View {
-        AppViewBuilder(
-            showTabBar: appState.showTabBar,
-            tabbarView: {
-                TabBarView()
-            },
-            onboardingView: {
-                WelcomeView()
-            }
-        )
-        .environment(appState)
-        .task {
-            await checkUserStatus()
-        }
-        .task {
-            try? await Task.sleep(for: .seconds(2))
-            await showATTPromptIfNeeded()
-        }
-        .onChange(of: appState.showTabBar, { _, showTabBar in
-            if !showTabBar {
-                Task {
+        RootView(
+            delegate: RootDelegate(
+                onApplicationDidAppear: nil,
+                onApplicationWillEnterForeground: { _ in
+                    Task {
+                        await checkUserStatus()
+                    }
+                },
+                onApplicationDidBecomeActive: nil,
+                onApplicationWillResignActive: nil,
+                onApplicationDidEnterBackground: nil,
+                onApplicationWillTerminate: nil
+            ),
+            content: {
+                AppViewBuilder(
+                    showTabBar: appState.showTabBar,
+                    tabbarView: {
+                        TabBarView()
+                    },
+                    onboardingView: {
+                        WelcomeView()
+                    }
+                )
+                .environment(appState)
+                .task {
                     await checkUserStatus()
                 }
+                .task {
+                    try? await Task.sleep(for: .seconds(2))
+                    await showATTPromptIfNeeded()
+                }
+                .onChange(of: appState.showTabBar, { _, showTabBar in
+                    if !showTabBar {
+                        Task {
+                            await checkUserStatus()
+                        }
+                    }
+                })
             }
-        })
+        )
+        
         /**
          简单理解这两项
          .environment(<#T##object: (Observable & AnyObject)?##(Observable & AnyObject)?#>) 这个中使用的是Class 类
