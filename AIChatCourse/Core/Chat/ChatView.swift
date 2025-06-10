@@ -149,6 +149,8 @@ struct ChatView: View {
         }
         .foregroundStyle(.secondary)
         .font(.callout)
+        .lineLimit(1)
+        .minimumScaleFactor(0.3)
     }
     
     private func profileModal(avatar: AvatarModel) -> some View {

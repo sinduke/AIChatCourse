@@ -75,6 +75,7 @@ struct OnboardingColorView: View {
                 } header: {
                     Text("Select a Profile Color")
                         .font(.headline)
+                        .multilineTextAlignment(.center)
                 }
 
             }

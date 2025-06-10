@@ -24,6 +24,7 @@ struct CategoryCellView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .addingGradientbackgroundForText()
+                    .lineLimit(1)
             })
             .cornerRadius(cornerRadius)
     }

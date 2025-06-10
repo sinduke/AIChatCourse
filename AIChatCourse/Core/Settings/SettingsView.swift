@@ -30,6 +30,8 @@ struct SettingsView: View {
                 purchasesSection
                 applicationSection
             }
+            .lineLimit(1)
+            .minimumScaleFactor(0.4)
             .sheet(isPresented: $showCreateAccountView, onDismiss: {
                 setAnonymousAccountStatus()
             }, content: {

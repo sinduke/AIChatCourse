@@ -31,11 +31,14 @@ struct ChatRowCellView: View {
                 if let headline {
                     Text(headline)
                         .font(.headline)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.5)
                 }
                 if let subheadline {
                     Text(subheadline)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -44,6 +47,9 @@ struct ChatRowCellView: View {
             if hasNewChat {
                 Text("NEW")
                     .badgeButton()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.1)
+                    .frame(maxWidth: 50)
             }
         }
         .padding(.vertical, 12)

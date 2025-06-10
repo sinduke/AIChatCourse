@@ -59,6 +59,7 @@ struct ExploreView: View {
                 }
                 
             }
+            .minimumScaleFactor(0.3)
             .navigationTitle("Explore")
             .screenAppearAnalytics(name: "ExploreView")
             .sheet(isPresented: $showDevSetting, content: {

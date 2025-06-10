@@ -111,9 +111,11 @@ struct ChatsView: View {
                                 ImageLoaderView(urlString: imageName)
                                     .aspectRatio(1, contentMode: .fit)
                                     .clipShape(.circle)
+                                    .frame(minHeight: 60)
                                 
                                 Text(avatar.name ?? "")
                                     .font(.caption)
+                                    .lineLimit(1)
                             }
                             .anyButton {
                                 onAvatarPressed(avatar: avatar)

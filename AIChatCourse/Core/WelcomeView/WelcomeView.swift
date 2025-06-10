@@ -27,6 +27,7 @@ struct WelcomeView: View {
                 
                 policySection
             }
+            .minimumScaleFactor(0.5)
             .screenAppearAnalytics(name: "WelcomeView")
             .sheet(
                 isPresented: $showSignInView,
@@ -65,8 +66,11 @@ struct WelcomeView: View {
                 Text("Get start".uppercased())
                     .callToActionButton()
             }
+            .frame(maxWidth: 500)
             Text("Already have an Account? Sign In")
                 .underline()
+                .lineLimit(1)
+                .minimumScaleFactor(0.2)
                 .font(.body)
                 .padding(8)
                 .onTapGesture {
@@ -79,12 +83,14 @@ struct WelcomeView: View {
         HStack(spacing: 8) {
             Link(destination: URL(string: Constants.teamsOfServiceURLString)!) {
                 Text("Teams of service")
+                    .lineLimit(1)
             }
             Circle()
                 .fill(.accent)
                 .frame(width: 4)
             Link(destination: URL(string: Constants.privacyPolicyURLString)!) {
                 Text("Privacy policy")
+                    .lineLimit(1)
             }
         }
     }
@@ -136,4 +142,5 @@ struct WelcomeView: View {
 
 #Preview {
     WelcomeView()
+        .previewEnvrionment()
 }

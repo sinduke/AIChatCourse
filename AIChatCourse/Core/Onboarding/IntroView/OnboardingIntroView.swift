@@ -28,7 +28,7 @@ struct OnboardingIntroView: View {
             .baselineOffset(6)
             .frame(maxHeight: .infinity)
             .padding(24)
-            
+            .minimumScaleFactor(0.5)
             NavigationLink {
                 OnboardingColorView()
             } label: {
@@ -48,4 +48,5 @@ struct OnboardingIntroView: View {
     NavigationStack {
         OnboardingIntroView()
     }
+    .previewEnvrionment()
 }

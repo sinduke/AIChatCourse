@@ -57,7 +57,7 @@ struct CategoryListView: View {
         }
         .screenAppearAnalytics(name: "CategoryList")
         .showCustomAlert(alert: $showAlert)
-        .ignoresSafeArea()
+        .ignoresSafeArea(.container, edges: [.top, .horizontal])
         .listStyle(.plain)
         .task {
             await loadAvatars()

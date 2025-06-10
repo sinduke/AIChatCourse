@@ -32,6 +32,7 @@ struct CreateAvatarView: View {
                 imageSection
                 saveSection
             }
+            .minimumScaleFactor(0.3)
             .toolbar(content: {
                 ToolbarItem(placement: .topBarLeading) {
                     backButton
@@ -55,6 +56,8 @@ struct CreateAvatarView: View {
             .padding(.top, 24)
             .opacity(generatedImage == nil ? 0.5 : 1)
             .disabled(generatedImage == nil)
+            .frame(maxWidth: 500)
+            .frame(maxWidth: .infinity)
         }
     }
     
@@ -69,6 +72,7 @@ struct CreateAvatarView: View {
                             onGeneraImagePressed()
                         }
                         .opacity(isGenerating ? 0 : 1)
+                        .lineLimit(1)
                     ProgressView()
                         .tint(.accent)
                         .opacity(isGenerating ? 1 : 0)
@@ -87,6 +91,7 @@ struct CreateAvatarView: View {
                         }
                     })
                     .clipShape(.circle)
+                    .frame(maxWidth: .infinity, maxHeight: 400)
             }
             .removeListRowFormatting()
         }
@@ -129,6 +134,8 @@ struct CreateAvatarView: View {
             TextField("Player 1", text: $avatarName)
         } header: {
             Text("name your avatar*")
+                .lineLimit(1)
+                .minimumScaleFactor(0.3)
         }
     }
     
