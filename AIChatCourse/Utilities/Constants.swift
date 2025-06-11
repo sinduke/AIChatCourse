@@ -13,5 +13,5 @@ struct Constants {
     static let teamsOfServiceURLString: String = "https://apple.com"
     static let accountColor: String = "#FF5757"
     // 打印日志详情的开关(开发者模式下这里配置)
-    static let printLog: Bool = false
+    static let printLog: Bool = true
 }

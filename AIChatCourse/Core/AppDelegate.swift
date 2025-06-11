@@ -60,6 +60,7 @@ struct Dependencies {
     let chatManager: ChatManager
     let logManager: LogManager
     let pushManager: PushManager
+    let abTestManager: ABTestManager
     
     init(config: BuildConfiguration) {
         
@@ -74,6 +75,8 @@ struct Dependencies {
             aiManager = AIManager(service: MockAIService())
             avatarManager = AvatarManager(service: MockAvatarService(), local: MockLocalAvatarPersistence())
             chatManager = ChatManager(service: MockChatService())
+            abTestManager = ABTestManager(service: MockABTestsService(), logManager: logManager)
+            
         case .dev:
             logManager = LogManager(services: [
                 // 日志开关(printParameters: 日志详情开关)
@@ -87,6 +90,8 @@ struct Dependencies {
             aiManager = AIManager(service: OpenAIService())
             avatarManager = AvatarManager(service: FirebaseAvatarService(), local: SwiftDataLocalAvatarPersistence())
             chatManager = ChatManager(service: FirebaseChatService())
+            abTestManager = ABTestManager(service: MockABTestsService(), logManager: logManager)
+            
         case .prod:
             logManager = LogManager(services: [
                 // prod中不添加打印(oslog)
@@ -100,6 +105,7 @@ struct Dependencies {
             aiManager = AIManager(service: OpenAIService())
             avatarManager = AvatarManager(service: FirebaseAvatarService(), local: SwiftDataLocalAvatarPersistence())
             chatManager = ChatManager(service: FirebaseChatService())
+            abTestManager = ABTestManager(service: MockABTestsService(), logManager: logManager)
         }
         pushManager = PushManager(logManager: logManager)
     }

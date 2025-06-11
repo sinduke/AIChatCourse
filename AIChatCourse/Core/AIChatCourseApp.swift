@@ -13,6 +13,7 @@ struct AIChatCourseApp: App {
     var body: some Scene {
         WindowGroup {
             AppView()
+                .environment(delegate.dependencies.abTestManager)
                 .environment(delegate.dependencies.aiManager)
                 .environment(delegate.dependencies.avatarManager)
                 .environment(delegate.dependencies.authManager)
@@ -44,6 +45,7 @@ extension View {
     // 相同的环境会出现覆盖的情况。靠近self的优先级更高
     func previewEnvrionment(isSignedIn: Bool = true) -> some View {
         self
+            .environment(ABTestManager(service: MockABTestsService()))
             .environment(AIManager(service: MockAIService()))
             .environment(UserManager(services: MockUserServices(user: isSignedIn ? .mock : nil)))
             .environment(AppState())
