@@ -66,3 +66,28 @@ extension View {
      }
      */
 }
+
+@MainActor
+class DevPreview {
+    static let shared = DevPreview()
+    
+    let authManager: AuthManager
+    let userManager: UserManager
+    let aiManager: AIManager
+    let avatarManager: AvatarManager
+    let chatManager: ChatManager
+    let logManager: LogManager
+    let pushManager: PushManager
+    let abTestManager: ABTestManager
+    
+    init(isSignedIn: Bool = true) {
+        self.authManager = AuthManager(service: MockAuthService(user: isSignedIn ? .mock() : nil))
+        self.userManager = UserManager(services: MockUserServices(user: isSignedIn ? .mock : nil))
+        self.aiManager = AIManager(service: MockAIService())
+        self.avatarManager = AvatarManager(service: MockAvatarService())
+        self.chatManager = ChatManager(service: MockChatService())
+        self.logManager = LogManager(services: [ ])
+        self.pushManager = PushManager()
+        self.abTestManager = ABTestManager(service: MockABTestsService())
+    }
+}

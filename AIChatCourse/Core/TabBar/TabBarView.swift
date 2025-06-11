@@ -8,15 +8,11 @@
 import SwiftUI
 
 struct TabBarView: View {
+    @Environment(UserManager.self) private var userManager
+    @Environment(AuthManager.self) private var authManager
+    @Environment(AvatarManager.self) private var avatarManager
+    @Environment(LogManager.self) private var logManager
     var body: some View {
-//        NavigationStack {
-//            
-////            .navigationBarHidden(true)
-////            // iOS18特有的方法
-////            .toolbarVisibility(.hidden, for: .navigationBar)
-//            .toolbar(.hidden, for: .navigationBar)
-//            .navigationTitle("Tabbar")
-//        }
 
         TabView {
             ExploreView()
@@ -27,7 +23,14 @@ struct TabBarView: View {
                 .tabItem {
                     Label("Chat", systemImage: "bubble.left.and.bubble.right.fill")
                 }
-            ProfileView()
+            ProfileView(
+                viewmodel: ProfileViewModel(
+                    userManager: userManager,
+                    authManager: authManager,
+                    avatarManager: avatarManager,
+                    logManager: logManager
+                )
+            )
                 .tabItem {
                     Label("Profile", systemImage: "person.fill")
                 }
@@ -37,4 +40,5 @@ struct TabBarView: View {
 
 #Preview {
     TabBarView()
+        .previewEnvrionment()
 }
