@@ -72,7 +72,21 @@ extension View {
 class DevPreview {
     static let shared = DevPreview()
     
-    let container: DependencyContainer
+    /// 由于Shared单例了DevPreview 所以需要计算属性 每次都更新container 否则有多个Preview同时渲染的时候会出现未知错误
+    var container: DependencyContainer {
+        let container = DependencyContainer()
+        container.register(AuthManager.self, service: authManager)
+        container.register(UserManager.self, service: userManager)
+        container.register(AIManager.self, service: aiManager)
+        container.register(AvatarManager.self, service: avatarManager)
+        container.register(ChatManager.self, service: chatManager)
+        container.register(LogManager.self, service: logManager)
+        container.register(PushManager.self, service: pushManager)
+        container.register(ABTestManager.self, service: abTestManager)
+        
+        return container
+    }
+    
     let authManager: AuthManager
     let userManager: UserManager
     let aiManager: AIManager
@@ -91,17 +105,6 @@ class DevPreview {
         self.logManager = LogManager(services: [ ])
         self.pushManager = PushManager()
         self.abTestManager = ABTestManager(service: MockABTestsService())
-        
-        let container = DependencyContainer()
-        container.register(AuthManager.self, service: authManager)
-        container.register(UserManager.self, service: userManager)
-        container.register(AIManager.self, service: aiManager)
-        container.register(AvatarManager.self, service: avatarManager)
-        container.register(ChatManager.self, service: chatManager)
-        container.register(LogManager.self, service: logManager)
-        container.register(PushManager.self, service: pushManager)
-        container.register(ABTestManager.self, service: abTestManager)
-        self.container = container
         
     }
 }
