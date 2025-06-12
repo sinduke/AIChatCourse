@@ -13,6 +13,7 @@ struct AIChatCourseApp: App {
     var body: some Scene {
         WindowGroup {
             AppView()
+                .environment(delegate.dependencies.container)
                 .environment(delegate.dependencies.abTestManager)
                 .environment(delegate.dependencies.aiManager)
                 .environment(delegate.dependencies.avatarManager)
@@ -71,6 +72,7 @@ extension View {
 class DevPreview {
     static let shared = DevPreview()
     
+    let container: DependencyContainer
     let authManager: AuthManager
     let userManager: UserManager
     let aiManager: AIManager
@@ -89,5 +91,17 @@ class DevPreview {
         self.logManager = LogManager(services: [ ])
         self.pushManager = PushManager()
         self.abTestManager = ABTestManager(service: MockABTestsService())
+        
+        let container = DependencyContainer()
+        container.register(AuthManager.self, service: authManager)
+        container.register(UserManager.self, service: userManager)
+        container.register(AIManager.self, service: aiManager)
+        container.register(AvatarManager.self, service: avatarManager)
+        container.register(ChatManager.self, service: chatManager)
+        container.register(LogManager.self, service: logManager)
+        container.register(PushManager.self, service: pushManager)
+        container.register(ABTestManager.self, service: abTestManager)
+        self.container = container
+        
     }
 }

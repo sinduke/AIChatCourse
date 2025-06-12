@@ -53,6 +53,7 @@ enum BuildConfiguration {
 
 @MainActor
 struct Dependencies {
+    let container: DependencyContainer
     let authManager: AuthManager
     let userManager: UserManager
     let aiManager: AIManager
@@ -63,7 +64,6 @@ struct Dependencies {
     let abTestManager: ABTestManager
     
     init(config: BuildConfiguration) {
-        
         switch config {
         case .mock(isSignedIn: let isSignedIn):
             logManager = LogManager(services: [
@@ -108,5 +108,41 @@ struct Dependencies {
             abTestManager = ABTestManager(service: MockABTestsService(), logManager: logManager)
         }
         pushManager = PushManager(logManager: logManager)
+        
+        let container = DependencyContainer()
+        
+        container.register(AuthManager.self, service: authManager)
+        container.register(UserManager.self, service: userManager)
+        container.register(AIManager.self, service: aiManager)
+        container.register(AvatarManager.self, service: avatarManager)
+        container.register(ChatManager.self, service: chatManager)
+        container.register(LogManager.self, service: logManager)
+        container.register(PushManager.self, service: pushManager)
+        container.register(ABTestManager.self, service: abTestManager)
+        self.container = container
+    }
+}
+
+// MARK: - 依赖注入容器
+
+/// 极简 Service Locator，使用字符串化的类型名作为 Key
+@Observable
+@MainActor
+class DependencyContainer {
+    private var services: [String: Any] = [:]
+    /// 直接注册实例
+    func register<T>(_ type: T.Type, service: T) {
+        let key = "\(type)"
+        services[key] = service
+    }
+    /// 使用闭包只是另一种写法 没有真正意义上的延迟作用 延迟看DependencyLazyContainer
+    func register<T>(_ type: T.Type, service: () -> T) {
+        let key = "\(type)"
+        services[key] = service()
+    }
+    /// 解析实例，调用方需要自己做可选解包
+    func resolve<T>(_ type: T.Type) -> T? {
+        let key = "\(type)"
+        return services[key] as? T
     }
 }

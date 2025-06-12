@@ -14,7 +14,6 @@ class ProfileViewModel {
     let authManager: AuthManager
     let avatarManager: AvatarManager
     let logManager: LogManager
-    let aiManager: AIManager
     
     private(set) var currentUser: UserModel?
     private(set) var myAvatars: [AvatarModel] = []
@@ -25,12 +24,11 @@ class ProfileViewModel {
     var showAlert: AnyAppAlert?
     var path: [NavigationPathOption] = []
     
-    init(userManager: UserManager, authManager: AuthManager, avatarManager: AvatarManager, logManager: LogManager, aiManager: AIManager) {
-        self.userManager = userManager
-        self.authManager = authManager
-        self.avatarManager = avatarManager
-        self.logManager = logManager
-        self.aiManager = aiManager
+    init(container: DependencyContainer) {
+        self.userManager = container.resolve(UserManager.self)!
+        self.authManager = container.resolve(AuthManager.self)!
+        self.avatarManager = container.resolve(AvatarManager.self)!
+        self.logManager = container.resolve(LogManager.self)!
     }
     
     func loadData() async {
@@ -136,16 +134,14 @@ class ProfileViewModel {
 }
 
 struct ProfileView: View {
-    
+    @Environment(DependencyContainer.self) private var container
     @State var viewmodel: ProfileViewModel
     
     var body: some View {
         NavigationStack(path: $viewmodel.path) {
             List {
-                
                 myInfoSection
                 myAvatarsSection
-
             }
             .navigationTitle("Profile")
             .screenAppearAnalytics(name: "ProfileView")
@@ -170,10 +166,7 @@ struct ProfileView: View {
             content: {
                 CreateAvatarView(
                     viewModel: CreateAvatarViewModel(
-                        authManager: viewmodel.authManager,
-                        aiManager: viewmodel.aiManager,
-                        avatarManager: viewmodel.avatarManager,
-                        logManager: viewmodel.logManager
+                        container: container
                     )
                 )
         })
@@ -252,13 +245,8 @@ struct ProfileView: View {
 }
 
 #Preview {
-    ProfileView(
-        viewmodel: ProfileViewModel(
-            userManager: DevPreview.shared.userManager,
-            authManager: DevPreview.shared.authManager,
-            avatarManager: DevPreview.shared.avatarManager,
-            logManager: DevPreview.shared.logManager, aiManager: DevPreview.shared.aiManager 
-        )
+    return ProfileView(
+        viewmodel: ProfileViewModel(container: DevPreview.shared.container)
     )
     .previewEnvrionment()
 }

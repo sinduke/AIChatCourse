@@ -26,11 +26,11 @@ class CreateAvatarViewModel {
     var characterAction: CharacterAction = .default
     var characterLocation: CharacterLocation = .default
     
-    init(authManager: AuthManager, aiManager: AIManager, avatarManager: AvatarManager, logManager: LogManager) {
-        self.authManager = authManager
-        self.aiManager = aiManager
-        self.avatarManager = avatarManager
-        self.logManager = logManager
+    init(container: DependencyContainer) {
+        self.authManager = container.resolve(AuthManager.self)!
+        self.aiManager = container.resolve(AIManager.self)!
+        self.avatarManager = container.resolve(AvatarManager.self)!
+        self.logManager = container.resolve(LogManager.self)!
     }
     
     // MARK: -- Function
@@ -287,12 +287,7 @@ struct CreateAvatarView: View {
 
 #Preview {
     CreateAvatarView(
-        viewModel: CreateAvatarViewModel(
-            authManager: DevPreview.shared.authManager,
-            aiManager: DevPreview.shared.aiManager,
-            avatarManager: AvatarManager(service: MockAvatarService()),
-            logManager: DevPreview.shared.logManager
-        )
+        viewModel: CreateAvatarViewModel(container: DevPreview.shared.container)
     )
     .previewEnvrionment()
 }
