@@ -46,6 +46,7 @@ extension View {
     // 相同的环境会出现覆盖的情况。靠近self的优先级更高
     func previewEnvrionment(isSignedIn: Bool = true) -> some View {
         self
+            .environment(DevPreview.shared.container)
             .environment(ABTestManager(service: MockABTestsService()))
             .environment(AIManager(service: MockAIService()))
             .environment(UserManager(services: MockUserServices(user: isSignedIn ? .mock : nil)))

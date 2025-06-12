@@ -30,7 +30,7 @@ struct ChatsView: View {
             }
             .navigationTitle("Chats")
             .screenAppearAnalytics(name: "Chats")
-            .navigationDestinationForCoreModult(path: $path)
+            .navigationDestinationForCoreModule(path: $path)
             .onAppear {
                 loadRecentAvatars()
             }

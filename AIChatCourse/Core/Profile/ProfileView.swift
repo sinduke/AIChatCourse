@@ -146,7 +146,7 @@ struct ProfileView: View {
             .navigationTitle("Profile")
             .screenAppearAnalytics(name: "ProfileView")
             .showCustomAlert(alert: $viewmodel.showAlert)
-            .navigationDestinationForCoreModult(path: $viewmodel.path)
+            .navigationDestinationForCoreModule(path: $viewmodel.path)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     settingButton

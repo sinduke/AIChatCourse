@@ -289,7 +289,7 @@ struct ExploreView: View {
                     }
                 }
             }
-            .navigationDestinationForCoreModult(path: $viewModel.path)
+            .navigationDestinationForCoreModule(path: $viewModel.path)
             .task {
                 await viewModel.loadFeaturedAvatar()
             }
