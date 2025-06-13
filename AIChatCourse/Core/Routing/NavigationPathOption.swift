@@ -12,8 +12,7 @@ enum NavigationPathOption: Hashable {
     case category(category: CharacterOption, imageName: String)
 }
 
-// swiftlint:disable: next type_name
-struct NavigationDestinationForCoreModuleViewModifier: ViewModifier {
+struct NavDestinationForCoreModuleViewModifier: ViewModifier {
     @Environment(DependencyContainer.self) private var container
     let path: Binding<[NavigationPathOption]>
     func body(content: Content) -> some View {
@@ -31,6 +30,6 @@ struct NavigationDestinationForCoreModuleViewModifier: ViewModifier {
 
 extension View {
     func navigationDestinationForCoreModule(path: Binding<[NavigationPathOption]>) -> some View {
-        modifier(NavigationDestinationForCoreModuleViewModifier(path: path))
+        modifier(NavDestinationForCoreModuleViewModifier(path: path))
     }
 }
