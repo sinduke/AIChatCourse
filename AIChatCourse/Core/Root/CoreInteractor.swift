@@ -34,6 +34,15 @@ struct CoreInteractor {
     var auth: UserAuthInfo? {
         authManager.auth
     }
+    
+    var activeTests: ActiveABTests {
+        abTestManager.activeTests
+    }
+    
+    var createAccountTest: ActiveABTests {
+        abTestManager.activeTests
+    }
+    
     func getAuthId() throws -> String {
         try authManager.getAuthId()
     }
@@ -155,7 +164,6 @@ struct CoreInteractor {
     }
     
     func reportChat(chatId: String, userId: String) async throws {
-        let reportChat = ReportModel.new(chatId: chatId, userId: userId)
         try await chatManager.reportChat(chatId: chatId, userId: userId)
     }
     
@@ -206,9 +214,9 @@ struct CoreInteractor {
     }
     
     // MARK: -- ABTestManager
-    var activeTests: ActiveABTests {
-        abTestManager.activeTests
-    }
+//    var activeTests: ActiveABTests {
+//        abTestManager.activeTests
+//    }
     
     // MARK: -- SharedFunction
     func signOut() async throws {
