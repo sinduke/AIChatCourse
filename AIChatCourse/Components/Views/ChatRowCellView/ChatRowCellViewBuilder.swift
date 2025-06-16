@@ -7,85 +7,103 @@
 
 import SwiftUI
 
-struct ChatRowCellViewBuilder: View {
+@MainActor
+protocol ChatRowCellInteractor {
+    var auth: UserAuthInfo? { get }
+    func getAvatar(id: String) async throws -> AvatarModel
+    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel?
     
-    var currentUserId: String? = ""
-    var chat: ChatModel = .mock
-    var getAvatar: () async -> AvatarModel?
-    var getLastChatMessage: () async -> ChatMessageModel?
+}
+
+extension CoreInteractor: ChatRowCellInteractor {}
+
+@Observable
+@MainActor
+final class ChatRowCellViewModel {
+    private let interactor: ChatRowCellInteractor
     
-    @State private var avatar: AvatarModel?
-    @State private var lastChatMessage: ChatMessageModel?
+    init(interactor: ChatRowCellInteractor) {
+        self.interactor = interactor
+    }
     
-    @State private var didLoadAvatar: Bool = false
-    @State private var didLoadChatMessage: Bool = false
+    private(set) var avatar: AvatarModel?
+    private(set) var lastChatMessage: ChatMessageModel?
+    private(set) var didLoadAvatar: Bool = false
+    private(set) var didLoadChatMessage: Bool = false
     
-    private var isLoading: Bool {
+    var isLoading: Bool {
         !(didLoadAvatar && didLoadChatMessage)
     }
     
-    private var hasNewChat: Bool {
-        guard let lastChatMessage, let currentUserId else { return false }
+    var hasNewChat: Bool {
+        guard let lastChatMessage, let currentUserId = interactor.auth?.uid else { return false }
         return !lastChatMessage.hasBeenSeenBy(userId: currentUserId)
     }
     
-    private var subheadline: String? {
-        if isLoading {
-            return "xxxx xxxx xxxx xxxx"
-        }
-        if avatar == nil && lastChatMessage == nil {
-            return "Error loading data"
-        }
-        
-        return lastChatMessage?.content?.content
+    func loadAvatar(chat: ChatModel) async {
+        avatar = try? await interactor.getAvatar(id: chat.avatarId)
+        didLoadAvatar = true
     }
     
-    var body: some View {
-        ChatRowCellView(
-            imageName: avatar?.profileImageName,
-            headline: isLoading ? "xxx xxx" : avatar?.name,
-            subheadline: subheadline,
-            hasNewChat: isLoading ? false : hasNewChat
-        )
-        .redacted(reason: isLoading ? .placeholder : [])
-        .task {
-            avatar = await getAvatar()
-            didLoadAvatar = true
-        }
-        .task {
-            lastChatMessage = await getLastChatMessage()
-            didLoadChatMessage = true
-        }
+    func loadLastMessage(chat: ChatModel) async {
+        lastChatMessage = try? await interactor.getLastChatMessage(chatId: chat.id)
+        didLoadChatMessage = true
     }
     
 }
 
+struct ChatRowCellViewBuilder: View {
+    
+    @State var viewModel: ChatRowCellViewModel
+    var chat: ChatModel = .mock
+    
+    var body: some View {
+        ChatRowCellView(
+            imageName: viewModel.avatar?.profileImageName,
+            headline: viewModel.isLoading ? "xxx xxx" : viewModel.avatar?.name,
+            subheadline: subheadline,
+            hasNewChat: viewModel.isLoading ? false : viewModel.hasNewChat
+        )
+        .redacted(reason: viewModel.isLoading ? .placeholder : [])
+        .task {
+            await viewModel.loadAvatar(chat: chat)
+        }
+        .task {
+            await viewModel.loadLastMessage(chat: chat)
+        }
+    }
+    
+    private var subheadline: String? {
+        if viewModel.isLoading {
+            return "xxxx xxxx xxxx xxxx"
+        }
+        if viewModel.avatar == nil && viewModel.lastChatMessage == nil {
+            return "Error loading data"
+        }
+        
+        return viewModel.lastChatMessage?.content?.content
+    }
+}
+
 #Preview {
-    VStack {
-        ChatRowCellViewBuilder {
-            try? await Task.sleep(for: .seconds(5))
-            return .mock
-        } getLastChatMessage: {
-            try? await Task.sleep(for: .seconds(1))
-            return .mock
-        }
-        
-        ChatRowCellViewBuilder {
-            .mock
-        } getLastChatMessage: {
-            .mock
-        }
-        
-        ChatRowCellViewBuilder {
-            nil
-        } getLastChatMessage: {
-            nil
-        }
-        
-        ChatRowCellViewBuilder {
-            nil
-        } getLastChatMessage: {
-            .mock
-        }
+    
+    let container = DevPreview.shared.container
+    container.register(
+        ChatManager.self,
+        service: ChatManager(
+            service: MockChatService(
+                chats: ChatModel.mocks,
+                messages: ChatMessageModel.mocks,
+                delay: 5,
+                showError: false
+            )
+        )
+    )
+    
+    return VStack {
+        ChatRowCellViewBuilder(
+            viewModel: ChatRowCellViewModel(interactor: CoreInteractor(container: container)),
+            chat: .mock
+        )
     }
 }

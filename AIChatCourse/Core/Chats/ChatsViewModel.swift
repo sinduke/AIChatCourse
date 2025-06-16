@@ -15,8 +15,6 @@ protocol ChatsInteractor {
     func trackEvent(event: LoggableEvent)
     func getAuthId() throws -> String
     func getAllChat(userId: String) async throws -> [ChatModel]
-    func getAvatar(id: String) async throws -> AvatarModel
-    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel?
 }
 
 extension CoreInteractor: ChatsInteractor {}
@@ -31,10 +29,6 @@ final class ChatsViewModel {
     private(set) var isLoadingChats: Bool = false
     
     var path: [NavigationPathOption] = []
-    
-    var auth: UserAuthInfo? {
-        interactor.auth
-    }
     
     init(interactor: ChatsInteractor) {
         self.interactor = interactor
@@ -75,14 +69,6 @@ final class ChatsViewModel {
     func onAvatarPressed(avatar: AvatarModel) {
         interactor.trackEvent(event: Event.avatarPressed(avatar: avatar))
         path.append(.chat(avatarId: avatar.avatarId, chat: nil))
-    }
-    
-    func getLastChatMessage(chatId: String) async throws -> ChatMessageModel? {
-        try await interactor.getLastChatMessage(chatId: chatId)
-    }
-    
-    func getAvatar(id: String) async throws -> AvatarModel {
-        try await interactor.getAvatar(id: id)
     }
     
     // MARK: -- enum

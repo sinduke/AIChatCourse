@@ -10,6 +10,7 @@ import SwiftUI
 struct ChatsView: View {
     
     @State var viewModel: ChatsViewModel
+    @Environment(DependencyContainer.self) private var container
     
     var body: some View {
         NavigationStack(path: $viewModel.path) {
@@ -82,17 +83,13 @@ struct ChatsView: View {
             } else {
                 ForEach(viewModel.chats) { chat in
                     ChatRowCellViewBuilder(
-                        currentUserId: viewModel.auth?.uid,
-                        chat: chat) {
-                            /// 特殊错误处理
-                            try? await viewModel.getAvatar(id: chat.avatarId)
-                        } getLastChatMessage: {
-                            try? await viewModel.getLastChatMessage(chatId: chat.id)
-                        }
-                        .anyButton(.highlight, action: {
-                            viewModel.onChatPressed(chat: chat)
-                        })
-                        .removeListRowFormatting()
+                        viewModel: ChatRowCellViewModel(interactor: CoreInteractor(container: container)),
+                        chat: chat
+                    )
+                    .anyButton(.highlight, action: {
+                        viewModel.onChatPressed(chat: chat)
+                    })
+                    .removeListRowFormatting()
                 }
             }
         } header: {
