@@ -40,9 +40,7 @@ struct ProfileView: View {
             },
             content: {
                 CreateAvatarView(
-                    viewModel: CreateAvatarViewModel(
-                        container: container
-                    )
+                    viewModel: CreateAvatarViewModel(interactor: CoreInteractor(container: container))
                 )
         })
         .task {

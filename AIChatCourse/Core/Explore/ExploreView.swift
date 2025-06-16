@@ -10,6 +10,7 @@ import SwiftUI
 struct ExploreView: View {
     
     @State var viewModel: ExploreViewModel
+    @Environment(DependencyContainer.self) private var container
     
     // MARK: -- View
     var body: some View {
@@ -46,7 +47,7 @@ struct ExploreView: View {
                   notificationsModal
             })
             .sheet(isPresented: $viewModel.showCreateAccountView, content: {
-                CreateAccountView()
+                CreateAccountView(viewModel: CreateAccountViewModel(interactor: CoreInteractor(container: container)))
                     .presentationDetents([.medium])
             })
             .toolbar {

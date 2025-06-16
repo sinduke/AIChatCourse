@@ -16,6 +16,7 @@ struct SettingsView: View {
     @Environment(AppState.self) private var appState
     @Environment(ChatManager.self) private var chatManager
     @Environment(LogManager.self) private var logManager
+    @Environment(DependencyContainer.self) private var container
     @State private var isPremium: Bool = false
     @State private var isAnonymousUser: Bool = false
     @State private var showCreateAccountView: Bool = false
@@ -35,7 +36,7 @@ struct SettingsView: View {
             .sheet(isPresented: $showCreateAccountView, onDismiss: {
                 setAnonymousAccountStatus()
             }, content: {
-                CreateAccountView()
+                CreateAccountView(viewModel: CreateAccountViewModel(interactor: CoreInteractor(container: container)))
                     .presentationDetents([.medium])
             })
             .navigationTitle("Settings")

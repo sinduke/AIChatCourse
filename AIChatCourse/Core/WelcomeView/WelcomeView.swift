@@ -12,6 +12,7 @@ struct WelcomeView: View {
     @State private var showSignInView: Bool = false
     @Environment(AppState.self) private var root
     @Environment(LogManager.self) private var logManager
+    @Environment(DependencyContainer.self) private var container
     
     var body: some View {
         NavigationStack {
@@ -33,7 +34,7 @@ struct WelcomeView: View {
                 isPresented: $showSignInView,
                 content: {
                     CreateAccountView(
-                        title: "Sign In",
+                        viewModel: CreateAccountViewModel(interactor: CoreInteractor(container: container)), title: "Sign In",
                         subTitle: "Connect to existing account",
                         onDidSignIn: { isNewUser in
                             handingDidSignIn(isNewUser: isNewUser)

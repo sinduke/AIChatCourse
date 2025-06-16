@@ -7,83 +7,6 @@
 
 import SwiftUI
 
-@Observable
-@MainActor
-class CategoryListViewModel {
-    private let avatarManager: AvatarManager
-    private let logManager: LogManager
-    
-    private(set) var avatars: [AvatarModel] = []
-    private(set) var isLoading: Bool = false
-    
-    var showAlert: AnyAppAlert?
-    
-    init(container: DependencyContainer) {
-        self.avatarManager = container.resolve(AvatarManager.self)!
-        self.logManager = container.resolve(LogManager.self)!
-    }
- 
-    // MARK: -- Funcation
-    func loadAvatars(category: CharacterOption) async {
-        logManager.trackEvent(event: Event.loadAvatarStart)
-        isLoading = true
-        defer {
-            isLoading = false
-        }
-        do {
-            avatars = try await avatarManager.getAvatarsForCategory(category: category)
-            logManager.trackEvent(event: Event.loadAvatarSuccess)
-        } catch {
-            showAlert = AnyAppAlert(error: error)
-            logManager.trackEvent(event: Event.loadAvatarFail(error: error))
-        }
-    }
-    
-    func onAvatarPressed(avatar: AvatarModel, path: Binding<[NavigationPathOption]>) {
-        path.wrappedValue.append(.chat(avatarId: avatar.avatarId, chat: nil))
-        logManager.trackEvent(event: Event.avatarPressed(avatar: avatar))
-    }
-    
-    // MARK: -- enum
-    enum Event: LoggableEvent {
-        case loadAvatarStart
-        case loadAvatarSuccess
-        case loadAvatarFail(error: Error)
-        case avatarPressed(avatar: AvatarModel)
-        
-        var eventName: String {
-            switch self {
-            case .loadAvatarStart: return "CategoryList_Avatar_Start"
-            case .loadAvatarSuccess: return "CategoryList_Avatar_Success"
-            case .loadAvatarFail: return "CategoryList_Avatar_Fail"
-            case .avatarPressed: return "CategoryList_Avatar_Pressed"
-            }
-        }
-        
-        var parameters: [String: Any]? {
-            switch self {
-            case .loadAvatarFail(error: let error):
-                return error.eventParameters
-            case .avatarPressed(avatar: let avatar):
-                return avatar.eventParameters
-            default:
-                return nil
-            }
-        }
-        
-        var type: LogType {
-            switch self {
-            case .loadAvatarFail:
-                return .severe
-            default:
-                return .analytic
-            }
-        }
-        
-    }
-    
-}
-
 struct CategoryListView: View {
     
     @State var viewModel: CategoryListViewModel
@@ -145,7 +68,14 @@ struct CategoryListView: View {
     let container = DevPreview.shared.container
     container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService()))
     
-    return CategoryListView(viewModel: CategoryListViewModel(container: container), path: .constant([]))
+    return CategoryListView(
+        viewModel: CategoryListViewModel(
+            interactor: CoreInteractor(
+                container: container
+            )
+        ),
+        path: .constant([])
+    )
         .previewEnvrionment()
 }
 
@@ -153,7 +83,7 @@ struct CategoryListView: View {
     let container = DevPreview.shared.container
     container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService(avatars: [])))
     
-    return CategoryListView(viewModel: CategoryListViewModel(container: container), path: .constant([]))
+    return CategoryListView(viewModel: CategoryListViewModel(interactor: CoreInteractor(container: container)), path: .constant([]))
         .previewEnvrionment()
 }
 
@@ -161,7 +91,7 @@ struct CategoryListView: View {
     let container = DevPreview.shared.container
     container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService(delay: 10)))
     
-    return CategoryListView(viewModel: CategoryListViewModel(container: container), path: .constant([]))
+    return CategoryListView(viewModel: CategoryListViewModel(interactor: CoreInteractor(container: container)), path: .constant([]))
         .previewEnvrionment()
 }
 
@@ -169,6 +99,6 @@ struct CategoryListView: View {
     let container = DevPreview.shared.container
     container.register(AvatarManager.self, service: AvatarManager(service: MockAvatarService(delay: 1, showError: true)))
     
-    return CategoryListView(viewModel: CategoryListViewModel(container: container), path: .constant([]))
+    return CategoryListView(viewModel: CategoryListViewModel(interactor: CoreInteractor(container: container)), path: .constant([]))
         .previewEnvrionment()
 }

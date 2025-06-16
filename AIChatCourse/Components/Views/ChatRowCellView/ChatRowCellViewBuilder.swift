@@ -12,7 +12,6 @@ protocol ChatRowCellInteractor {
     var auth: UserAuthInfo? { get }
     func getAvatar(id: String) async throws -> AvatarModel
     func getLastChatMessage(chatId: String) async throws -> ChatMessageModel?
-    
 }
 
 extension CoreInteractor: ChatRowCellInteractor {}
