@@ -16,18 +16,22 @@ protocol ABTestsService {
 
 struct ActiveABTests: Codable {
     private(set) var createAccountTest: Bool
+    private(set) var onBoardingCommunityTest: Bool
     
-    init(createAccountTest: Bool) {
+    init(createAccountTest: Bool, onBoardingCommunityTest: Bool) {
         self.createAccountTest = createAccountTest
+        self.onBoardingCommunityTest = onBoardingCommunityTest
     }
     
     enum CodingKeys: String, CodingKey {
         case createAccountTest = "_20250610_CreateAccountTest"
+        case onBoardingCommunityTest = "_20250610_OnBCommunityTest"
     }
     
     var eventParameters: [String: Any] {
         let dict: [String: Any?] = [
-            "test\(CodingKeys.createAccountTest.rawValue)": createAccountTest
+            "test\(CodingKeys.createAccountTest.rawValue)": createAccountTest,
+            "test\(CodingKeys.onBoardingCommunityTest.rawValue)": onBoardingCommunityTest
         ]
         // 返回把Nil丢弃之后的值
         return dict.compactMapValues({ $0 })
@@ -37,14 +41,18 @@ struct ActiveABTests: Codable {
         createAccountTest = newValue
     }
     
+    mutating func update(onBoardingCommunityTest newValue: Bool) {
+        onBoardingCommunityTest = newValue
+    }
 }
 
 class MockABTestsService: ABTestsService {
     var activeTests: ActiveABTests
     //    let createAccountTest2: Bool
-    init(createAccountTest: Bool? = nil) {
+    init(createAccountTest: Bool? = nil, onBoardingCommunityTest: Bool? = nil) {
         self.activeTests = ActiveABTests(
-            createAccountTest: createAccountTest ?? false
+            createAccountTest: createAccountTest ?? false,
+            onBoardingCommunityTest: onBoardingCommunityTest ?? false
         )
     }
     
@@ -62,8 +70,14 @@ class LocalABTestService: ABTestsService {
     )
     private var createAccountTest: Bool
     
+    @UserDefault(
+        key: ActiveABTests.CodingKeys.onBoardingCommunityTest.rawValue,
+        startingValue: .random()
+    )
+    private var onBoardingCommunityTest: Bool
+    
     var activeTests: ActiveABTests {
-        ActiveABTests(createAccountTest: createAccountTest)
+        ActiveABTests(createAccountTest: createAccountTest, onBoardingCommunityTest: onBoardingCommunityTest)
     }
     
     init() {
@@ -72,6 +86,7 @@ class LocalABTestService: ABTestsService {
     
     func saveUpdatedConfig(updatedTest: ActiveABTests) throws {
         createAccountTest = updatedTest.createAccountTest
+        onBoardingCommunityTest = updatedTest.onBoardingCommunityTest
     }
     
 }

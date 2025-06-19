@@ -8,6 +8,9 @@
 import SwiftUI
 
 struct OnboardingIntroView: View {
+    
+    @Environment(ABTestManager.self) private var abTestManager
+    
     var body: some View {
         VStack {
             Group {
@@ -30,7 +33,11 @@ struct OnboardingIntroView: View {
             .padding(24)
             .minimumScaleFactor(0.5)
             NavigationLink {
-                OnboardingColorView()
+                if abTestManager.activeTests.onBoardingCommunityTest {
+                    OnboardingCommunityView()
+                } else {
+                    OnboardingColorView()
+                }
             } label: {
                 Text("Continue")
                     .callToActionButton()
@@ -48,5 +55,13 @@ struct OnboardingIntroView: View {
     NavigationStack {
         OnboardingIntroView()
     }
+    .previewEnvrionment()
+}
+
+#Preview("OnBCommunityTest") {
+    NavigationStack {
+        OnboardingIntroView()
+    }
+    .environment(ABTestManager(service: MockABTestsService(onBoardingCommunityTest: true)))
     .previewEnvrionment()
 }
