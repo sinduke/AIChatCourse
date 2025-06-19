@@ -10,10 +10,12 @@ import SwiftUI
 protocol ABTestsService {
     var activeTests: ActiveABTests { get }
 //    var createAccountTest2: Bool { get }
+    
+    func saveUpdatedConfig(updatedTest: ActiveABTests) throws
 }
 
 struct ActiveABTests: Codable {
-    let createAccountTest: Bool
+    private(set) var createAccountTest: Bool
     
     init(createAccountTest: Bool) {
         self.createAccountTest = createAccountTest
@@ -31,16 +33,47 @@ struct ActiveABTests: Codable {
         return dict.compactMapValues({ $0 })
     }
     
+    mutating func update(createAccountTest newValue: Bool) {
+        createAccountTest = newValue
+    }
+    
 }
 
-struct MockABTestsService: ABTestsService {
-    let activeTests: ActiveABTests
-//    let createAccountTest2: Bool
+class MockABTestsService: ABTestsService {
+    var activeTests: ActiveABTests
+    //    let createAccountTest2: Bool
     init(createAccountTest: Bool? = nil) {
         self.activeTests = ActiveABTests(
             createAccountTest: createAccountTest ?? false
         )
     }
+    
+    func saveUpdatedConfig(updatedTest: ActiveABTests) throws {
+        activeTests = updatedTest
+    }
+    
+}
+
+class LocalABTestService: ABTestsService {
+    
+    @UserDefault(
+        key: ActiveABTests.CodingKeys.createAccountTest.rawValue,
+        startingValue: .random()
+    )
+    private var createAccountTest: Bool
+    
+    var activeTests: ActiveABTests {
+        ActiveABTests(createAccountTest: createAccountTest)
+    }
+    
+    init() {
+        
+    }
+    
+    func saveUpdatedConfig(updatedTest: ActiveABTests) throws {
+        createAccountTest = updatedTest.createAccountTest
+    }
+    
 }
 
 @MainActor
@@ -63,7 +96,13 @@ class ABTestManager {
     }
     
     private func configure() {
+        activeTests = service.activeTests
         logManager?.addUserProperties(dict: activeTests.eventParameters, isHighPriority: false)
+    }
+    
+    func override(updateTest: ActiveABTests) throws {
+        try service.saveUpdatedConfig(updatedTest: updateTest)
+        configure()
     }
     
 }

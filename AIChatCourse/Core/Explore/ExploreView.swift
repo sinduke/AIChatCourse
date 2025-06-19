@@ -7,6 +7,17 @@
 
 import SwiftUI
 
+@MainActor
+struct CoreBuilder {
+    func createAccountView(container: DependencyContainer) -> some View {
+        CreateAccountView(viewModel: CreateAccountViewModel(interactor: CoreInteractor(container: container)))
+    }
+    
+    func createDevSettingView() -> some View {
+        DevSettingsView()
+    }
+}
+
 struct ExploreView: View {
     
     @State var viewModel: ExploreViewModel
@@ -41,13 +52,13 @@ struct ExploreView: View {
             .navigationTitle("Explore")
             .screenAppearAnalytics(name: "ExploreView")
             .sheet(isPresented: $viewModel.showDevSetting, content: {
-                DevSettingsView()
+                CoreBuilder().createDevSettingView()
             })
             .showModal(showModal: $viewModel.showNotificationsModal, content: {
                   notificationsModal
             })
             .sheet(isPresented: $viewModel.showCreateAccountView, content: {
-                CreateAccountView(viewModel: CreateAccountViewModel(interactor: CoreInteractor(container: container)))
+                CoreBuilder().createAccountView(container: container)
                     .presentationDetents([.medium])
             })
             .toolbar {

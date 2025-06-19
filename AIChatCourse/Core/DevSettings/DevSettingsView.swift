@@ -6,16 +6,24 @@
 //
 
 import SwiftUI
+/**
+ MVVM (5/6)
+ */
 
 struct DevSettingsView: View {
+    
     @Environment(\.dismiss) private var dismiss
     @Environment(AuthManager.self) private var authManager
     @Environment(UserManager.self) private var userManager
+    @Environment(ABTestManager.self) private var abTestManager
+    
+    @State private var createAccountTest: Bool = false
     
     // MARK: -- View
     var body: some View {
         NavigationStack {
             List {
+                abTestSection
                 authSection
                 userSection
                 deviceSection
@@ -25,6 +33,9 @@ struct DevSettingsView: View {
                     backButtonView
                 }
             })
+            .onFirstAppear {
+                loadABTest()
+            }
             .screenAppearAnalytics(name: "DevSettings")
             .navigationTitle("DevSettings 🧑‍💻")
         }
@@ -78,6 +89,16 @@ struct DevSettingsView: View {
         }
     }
     
+    private var abTestSection: some View {
+        Section {
+            Toggle("Create Acc Test", isOn: $createAccountTest)
+                .onChange(of: createAccountTest, handleCreateAccountChange)
+        } header: {
+            Text("ABTest")
+        }
+        .font(.caption)
+    }
+    
     // MARK: -- FuncView
     private func itemRow(item: (key: String, value: Any)) -> some View {
         HStack {
@@ -94,7 +115,23 @@ struct DevSettingsView: View {
         .minimumScaleFactor(0.3)
     }
     
-    // MARK: -- Func
+    // MARK: -- Func --
+    private func handleCreateAccountChange(oldValue: Bool, newValue: Bool) {
+        if newValue != abTestManager.activeTests.createAccountTest {
+            do {
+                var tests = abTestManager.activeTests
+                tests.update(createAccountTest: newValue)
+                try abTestManager.override(updateTest: tests)
+            } catch {
+                createAccountTest = abTestManager.activeTests.createAccountTest
+            }
+        }
+    }
+    
+    private func loadABTest() {
+        createAccountTest = abTestManager.activeTests.createAccountTest
+    }
+    
     private func onBackButtonPressed() {
         dismiss()
     }
