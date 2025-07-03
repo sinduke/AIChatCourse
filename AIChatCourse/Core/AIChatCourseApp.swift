@@ -26,21 +26,6 @@ struct AIChatCourseApp: App {
     }
 }
 
-/**
- struct EnvironmentBuilderView<Content: View>: View {
-     
-     @State private var authManager = AuthManager(service: FirebaseAuthService())
-     @State private var usermanager = UserManager(services: ProductUserServices())
-     
-     @ViewBuilder var content: () -> Content
-     var body: some View {
-         content()
-             .environment(authManager)
-             .environment(usermanager)
-     }
- }
- */
-
 extension View {
     
     // 相同的环境会出现覆盖的情况。靠近self的优先级更高

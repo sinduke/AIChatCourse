@@ -45,6 +45,8 @@ class UserManager {
                     
                     self.saveCurrentUserLocally()
                 }
+            } catch is CancellationError {
+                // 正常取消，忽略
             } catch {
                 logManager?.trackEvent(event: Event.remoteListenerFail(error: error))
             }

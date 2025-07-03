@@ -9,6 +9,8 @@ import SwiftUI
 
 @MainActor
 protocol ExploreInteractor {
+    var activeTests: ActiveABTests { get }
+    var categoryTest: CategoryRowTestOption { get }
     func trackEvent(event: LoggableEvent)
     func schedulePushNotificationsForNextWeek()
     var createAccountTest: ActiveABTests { get }
@@ -43,6 +45,14 @@ class ExploreViewModel {
         #else
         return false
         #endif
+    }
+    
+    var activeTest: ActiveABTests {
+        interactor.activeTests
+    }
+    
+    var categoryTest: CategoryRowTestOption {
+        activeTest.categoryRowTest
     }
     
     init(interactor: ExploreInteractor) {

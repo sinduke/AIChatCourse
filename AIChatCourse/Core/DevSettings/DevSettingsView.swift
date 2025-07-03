@@ -19,6 +19,7 @@ struct DevSettingsView: View {
     
     @State private var createAccountTest: Bool = false
     @State private var onBoardingCommunityTest: Bool = false
+    @State private var categoryRowTest: CategoryRowTestOption = .default
     
     // MARK: -- View
     var body: some View {
@@ -97,6 +98,13 @@ struct DevSettingsView: View {
             
             Toggle("OnB Community Test", isOn: $onBoardingCommunityTest)
                 .onChange(of: onBoardingCommunityTest, handleonBoardingCommunityChange)
+            
+            Picker("Category", selection: $categoryRowTest) {
+                ForEach(CategoryRowTestOption.allCases, id: \.self) { category in
+                    Text(category.rawValue)
+                        .id(category)
+                }
+            }
         } header: {
             Text("ABTest")
         }
@@ -164,6 +172,7 @@ struct DevSettingsView: View {
     private func loadABTest() {
         createAccountTest = abTestManager.activeTests.createAccountTest
         onBoardingCommunityTest = abTestManager.activeTests.onBoardingCommunityTest
+        categoryRowTest = abTestManager.activeTests.categoryRowTest
     }
     
     private func onBackButtonPressed() {

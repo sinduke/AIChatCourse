@@ -35,14 +35,6 @@ struct CoreInteractor {
         authManager.auth
     }
     
-    var activeTests: ActiveABTests {
-        abTestManager.activeTests
-    }
-    
-    var createAccountTest: ActiveABTests {
-        abTestManager.activeTests
-    }
-    
     func getAuthId() throws -> String {
         try authManager.getAuthId()
     }
@@ -214,9 +206,17 @@ struct CoreInteractor {
     }
     
     // MARK: -- ABTestManager
-//    var activeTests: ActiveABTests {
-//        abTestManager.activeTests
-//    }
+    var categoryTest: CategoryRowTestOption {
+        abTestManager.activeTests.categoryRowTest
+    }
+    
+    var activeTests: ActiveABTests {
+        abTestManager.activeTests
+    }
+    
+    var createAccountTest: ActiveABTests {
+        abTestManager.activeTests
+    }
     
     // MARK: -- SharedFunction
     func signOut() async throws {

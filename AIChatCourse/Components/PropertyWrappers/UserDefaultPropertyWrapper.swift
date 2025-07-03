@@ -51,3 +51,34 @@ extension Double:  UserDefaultCompatible {}
 extension String:  UserDefaultCompatible {}
 extension URL:     UserDefaultCompatible {}
 // swiftlint:enable colon
+
+@propertyWrapper
+struct UserDefaultEnum<T: RawRepresentable> where T.RawValue == String {
+    private let key: String
+    private let startingValue: T
+    private let store: UserDefaults
+
+    init(key: String,
+         startingValue: T,
+         store: UserDefaults = .standard) {
+        self.key = key
+        self.startingValue = startingValue
+        self.store = store
+    }
+    
+    var wrappedValue: T {
+        get {
+            if let savedString = store.string(forKey: key), let savedValue = T(rawValue: savedString) {
+                return savedValue
+            } else {
+                store.set(startingValue.rawValue, forKey: key)
+                return startingValue
+            }
+        }
+        set { store.set(newValue.rawValue, forKey: key) }
+    }
+
+    // 便于测试时移除
+    var projectedValue: Self { self }
+    func remove() { store.removeObject(forKey: key) }
+}

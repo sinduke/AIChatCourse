@@ -92,7 +92,9 @@ struct ExploreView: View {
             }
         }
     }
+}
 
+extension ExploreView {
     private var notificationsModal: some View {
         CustomModalView(
             title: "Notifications",
@@ -211,7 +213,6 @@ struct ExploreView: View {
         }
         .removeListRowFormatting()
     }
-    
 }
 
 #Preview("Has Data") {
@@ -231,6 +232,46 @@ struct ExploreView: View {
     return ExploreView(viewModel: ExploreViewModel(interactor: CoreInteractor(container: DevPreview.shared.container)))
         .previewEnvrionment()
 }
+
+#Preview("CategoryRowTest: original") {
+    let container = DevPreview.shared.container
+    container.register(
+        ABTestManager.self,
+        service: ABTestManager(
+            service: MockABTestsService(categoryRowTest: .default)
+        )
+    )
+    
+    return ExploreView(viewModel: ExploreViewModel(interactor: CoreInteractor(container: container)))
+}
+
+//#Preview("CategoryRowTest: top") {
+//    let container = DevPreview.shared.container
+//    container.register(
+//        ABTestManager.self,
+//        service: ABTestManager(
+//            service: MockABTestsService(
+//                categoryRowTest: .top
+//            )
+//        )
+//    )
+//    
+//    return ExploreView(viewModel: ExploreViewModel(interactor: CoreInteractor(container: container)))
+//}
+//
+//#Preview("CategoryRowTest: hidden") {
+//    let container = DevPreview.shared.container
+//    container.register(
+//        ABTestManager.self,
+//        service: ABTestManager(
+//            service: MockABTestsService(
+//                categoryRowTest: .hidden
+//            )
+//        )
+//    )
+//    
+//    return ExploreView(viewModel: ExploreViewModel(interactor: CoreInteractor(container: container)))
+//}
 
 #Preview("No Data") {
     let container = DevPreview.shared.container
